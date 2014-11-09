@@ -76,8 +76,9 @@ public class DCPWrapper {
             int count = 0;
             while ((count = cmd.read(line)) > 0){
                 out.write(line, 0, count);
+                System.out.println(line + " line");
             }
-            System.out.println(line + " line");
+            
             
             out.close();
             cmd.close();
@@ -107,7 +108,7 @@ public class DCPWrapper {
         
         stopwatch.start();
         
-        BufferedOutputStream binWriter = new BufferedOutputStream(new FileOutputStream(new File("compressed.bin")));
+        BufferedOutputStream binWriter = new BufferedOutputStream(new FileOutputStream(new File(path + "/files/" + file + "compressed.bin")));
         
         int bufferSize = socket.getReceiveBufferSize();
         byte[] compressed = new byte[bufferSize];
@@ -115,17 +116,24 @@ public class DCPWrapper {
         while ((count = in.read(compressed)) > 0){
             binWriter.write(compressed, 0, count);
         }
-        
-        ProcessBuilder b = new ProcessBuilder("cmd.exe", "/C", "cd " + path + " && " + alg + "decompress compressed" + ((!file2.equals("")) ? "" : " " + file2));
+        System.out.println("Wrote " + file + "compressed");
+        System.out.println("cmd.exe" + "/C" + "cd " + path + " && " + alg + "decompress " + file + "compressed" + ((!file2.equals("")) ? "" : " " + file2));
+        ProcessBuilder b = new ProcessBuilder("cmd.exe", "/C", "cd " + path + " && " + alg + "decompress " + file + "compressed" + ((!file2.equals("")) ? "" : " " + file2));
         b.redirectOutput(ProcessBuilder.Redirect.PIPE);
+        b.redirectError(ProcessBuilder.Redirect.PIPE);
         Process process = b.start();
         Scanner scanner = new Scanner(new InputStreamReader(process.getInputStream()));
+        Scanner error = new Scanner(new InputStreamReader(process.getErrorStream()));
+        while(error.hasNextLine()){
+                System.out.println(error.nextLine());
+            }
         
         String line = "";
         while (scanner.hasNextLine()){
             line += scanner.nextLine();
         }
         
+        //System.out.println("");
         stopwatch.stop();
             
         System.out.println(line + "\n");
