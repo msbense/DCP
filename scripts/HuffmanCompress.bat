@@ -3,4 +3,4 @@
 cd project/bin
 
 set file=%1
-java Algorithms/Huffman - < files/%file%.txt | java Algorithms/BinaryDump 32
+java Algorithms/Huffman - < files/%file% .txt
