@@ -50,7 +50,7 @@ public class DCPWrapper {
             System.out.println(socket.getRemoteSocketAddress().toString() + " connected");
         
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
             
             while ((alg = in.readLine()).equals(null)){}
             while ((file = in.readLine()).equals(null)){}
@@ -58,20 +58,29 @@ public class DCPWrapper {
                 while ((file2 = in.readLine()).equals(null)){}
             }
             
+            System.out.println("cmd.exe " +  "/C " +  "cd " + path + " && " + alg + "compress " + file + ((!file2.equals("")) ? "" : " " + file2));
             ProcessBuilder b = new ProcessBuilder("cmd.exe", "/C", "cd " + path + " && " + alg + "compress " + file + ((!file2.equals("")) ? "" : " " + file2));
             b.redirectOutput(ProcessBuilder.Redirect.PIPE);
+            b.redirectError(ProcessBuilder.Redirect.PIPE);
             Process process = b.start();
-            Scanner scanner = new Scanner(new InputStreamReader(process.getInputStream()));
+            InputStream cmd = process.getInputStream();
+            Scanner error = new Scanner(new InputStreamReader(process.getErrorStream()));
             
-            String line = "";
-            while (scanner.hasNextLine()){
-                line += scanner.nextLine();
+            
+            while(error.hasNextLine()){
+                System.out.println(error.nextLine());
             }
-        
-            out.println(line);
+            
+            int bufferSize = socket.getSendBufferSize();
+            byte[] line = new byte[bufferSize];
+            int count = 0;
+            while ((count = cmd.read(line)) > 0){
+                out.write(line, 0, count);
+            }
+            System.out.println(line + " line");
             
             out.close();
-            scanner.close();
+            cmd.close();
             socket.close();
             
             
@@ -86,23 +95,28 @@ public class DCPWrapper {
         Socket socket = new Socket(InetAddress.getByName(host), port);
         
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
+        
         
         out.println(alg);
         out.println(file);
         if (alg.equals("arithmeticcompress")) out.println(file2);
-        System.out.println("Wrote files");
         
         StopWatch stopwatch = new StopWatch();
         
         
         stopwatch.start();
-        String compressed = in.readLine();
         
-        PrintWriter binWriter= new PrintWriter(new File("compressed"));
-        binWriter.write(compressed);
+        BufferedOutputStream binWriter = new BufferedOutputStream(new FileOutputStream(new File("compressed.bin")));
         
-        ProcessBuilder b = new ProcessBuilder("cmd.exe", "/C", "cd " + path + " && " + alg + "decompress " + compressed + ((!file2.equals("")) ? "" : " " + file2));
+        int bufferSize = socket.getReceiveBufferSize();
+        byte[] compressed = new byte[bufferSize];
+        int count = 0;
+        while ((count = in.read(compressed)) > 0){
+            binWriter.write(compressed, 0, count);
+        }
+        
+        ProcessBuilder b = new ProcessBuilder("cmd.exe", "/C", "cd " + path + " && " + alg + "decompress compressed" + ((!file2.equals("")) ? "" : " " + file2));
         b.redirectOutput(ProcessBuilder.Redirect.PIPE);
         Process process = b.start();
         Scanner scanner = new Scanner(new InputStreamReader(process.getInputStream()));
