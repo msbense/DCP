@@ -16,7 +16,7 @@ import org.apache.commons.lang3.time.StopWatch;
  */
 public class DCPWrapper {
     
-    static String host, port, role, path, alg, file;
+    static String host, port, role, path, alg, file, file2 = "";
     
     public static void main(String[] args) throws IOException, InterruptedException{
         
@@ -30,13 +30,16 @@ public class DCPWrapper {
         }   
         else {
             host = args[2];
-            alg = args[3];
-            file = args[4];
+            path = args[3];
+            alg = args[4];
+            file = args[5];
+            if (alg.equals("arithmeticcompress")){
+                file2 = args[6];
+            }
             client(host, Integer.parseInt(port));
         }
     }
     public static void server(int port) throws IOException, InterruptedException{
-        Scanner flowcontrol = new Scanner(System.in); 
         
         ServerSocket server = new ServerSocket(port);
         Socket socket;
@@ -51,8 +54,11 @@ public class DCPWrapper {
             
             while ((alg = in.readLine()).equals(null)){}
             while ((file = in.readLine()).equals(null)){}
+            if (alg.equals("arithmeticcompress")){
+                while ((file2 = in.readLine()).equals(null)){}
+            }
             
-            ProcessBuilder b = new ProcessBuilder("cmd.exe", "/C", "cd " + path + " && " + alg + " " + file);
+            ProcessBuilder b = new ProcessBuilder("cmd.exe", "/C", "cd " + path + " && " + alg + "compress " + file + ((!file2.equals("")) ? "" : " " + file2));
             b.redirectOutput(ProcessBuilder.Redirect.PIPE);
             Process process = b.start();
             Scanner scanner = new Scanner(new InputStreamReader(process.getInputStream()));
@@ -84,14 +90,30 @@ public class DCPWrapper {
         
         out.println(alg);
         out.println(file);
+        if (alg.equals("arithmeticcompress")) out.println(file2);
         System.out.println("Wrote files");
         
         StopWatch stopwatch = new StopWatch();
+        
+        
         stopwatch.start();
-        String line = in.readLine();
+        String compressed = in.readLine();
+        
+        PrintWriter binWriter= new PrintWriter(new File("compressed"));
+        binWriter.write(compressed);
+        
+        ProcessBuilder b = new ProcessBuilder("cmd.exe", "/C", "cd " + path + " && " + alg + "decompress " + compressed + ((!file2.equals("")) ? "" : " " + file2));
+        b.redirectOutput(ProcessBuilder.Redirect.PIPE);
+        Process process = b.start();
+        Scanner scanner = new Scanner(new InputStreamReader(process.getInputStream()));
+        
+        String line = "";
+        while (scanner.hasNextLine()){
+            line += scanner.nextLine();
+        }
+        
         stopwatch.stop();
             
-        
         System.out.println(line + "\n");
         System.out.println(stopwatch.getNanoTime() + " nanoseconds");
         
