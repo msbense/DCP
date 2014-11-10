@@ -63,20 +63,20 @@ public class DCPWrapper {
             b.redirectOutput(ProcessBuilder.Redirect.PIPE);
             b.redirectError(ProcessBuilder.Redirect.PIPE);
             Process process = b.start();
-            InputStream cmd = process.getInputStream();
+            Scanner cmd = new Scanner(process.getInputStream());
             Scanner error = new Scanner(new InputStreamReader(process.getErrorStream()));
-            
             
             while(error.hasNextLine()){
                 System.out.println(error.nextLine());
             }
             
             int bufferSize = socket.getSendBufferSize();
-            byte[] line = new byte[bufferSize];
+            byte[] line = new byte[100000];
             int count = 0;
-            while ((count = cmd.read(line)) > 0){
-                out.write(line, 0, count);
-                System.out.println(line + " line");
+            System.out.println(cmd.nextLine());
+            while (cmd.hasNextByte()){
+                out.write(cmd.nextByte());
+                System.out.println((byte) count);
             }
             
             
@@ -104,8 +104,6 @@ public class DCPWrapper {
         if (alg.equals("arithmeticcompress")) out.println(file2);
         
         StopWatch stopwatch = new StopWatch();
-        
-        
         stopwatch.start();
         
         BufferedOutputStream binWriter = new BufferedOutputStream(new FileOutputStream(new File(path + "/files/" + file + "compressed.bin")));
@@ -114,7 +112,7 @@ public class DCPWrapper {
         byte[] compressed = new byte[bufferSize];
         int count = 0;
         while ((count = in.read(compressed)) > 0){
-            binWriter.write(compressed, 0, count);
+            binWriter.write(count);
         }
         System.out.println("Wrote " + file + "compressed");
         System.out.println("cmd.exe" + "/C" + "cd " + path + " && " + alg + "decompress " + file + "compressed" + ((!file2.equals("")) ? "" : " " + file2));
