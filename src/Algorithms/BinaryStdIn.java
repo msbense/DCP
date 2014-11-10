@@ -45,7 +45,7 @@ public final class BinaryStdIn {
 
     // don't instantiate
     private BinaryStdIn() { }
-
+    
     private static void fillBuffer() {
         try { 
         	buffer = in.read(); 

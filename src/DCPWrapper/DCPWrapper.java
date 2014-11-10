@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package DCPWrapper;
+import Algorithms.Huffman;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -63,6 +64,7 @@ public class DCPWrapper {
             b.redirectOutput(ProcessBuilder.Redirect.PIPE);
             b.redirectError(ProcessBuilder.Redirect.PIPE);
             Process process = b.start();
+            
             Scanner cmd = new Scanner(process.getInputStream());
             Scanner error = new Scanner(new InputStreamReader(process.getErrorStream()));
             
