@@ -1,45 +1,52 @@
 package Runnables;
 
 import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 import java.util.*;
 import java.io.*;
 
+
+/** 
+ * to decompress back into a string: String outputString = new String(result, 0, resultLength, "UTF-8"); 
+*/
 public class Deflate  {
-	public static void compress() {
+	private static int compressedDataLength = 0;
+	private static byte[] output = new byte[100];
+	public static void compress(BufferedInputStream in, BufferedOutputStream out) {
 		try {
-			Scanner scan = new Scanner(System.in);
-			double time ; //the time it takes to compress in milliseconds 
-			
-			//gets the file to compress and the input stream
-			System.out.println("The name of the file to compress");
-			FileReader fr = new FileReader("files to test/" + scan.next());
-			BufferedReader br = new BufferedReader(fr);
-			
 			//make string of data and convert to bits
 			String message = "";
-			while(br.ready()) {
-				message += br.readLine();
+			while(in.read() != -1) {
+				message += in.read();
 			}
 			byte[] input = message.getBytes();
-			
-			//get the start time
-			double startTime = System.currentTimeMillis();
-			
+		
 			//compresses the data
 			Deflater compressor = new Deflater();
 			compressor.setInput(input);
 			compressor.finish();
-			int compressedData = compressor.deflate(input);
-			
-			//gets end time
-			double endTime = System.currentTimeMillis();
-			
-			//computes the total time
-			time = endTime - startTime; 
+			compressedDataLength = compressor.deflate(output);
+			compressor.end();
 			
 			//outputs the data
-			System.out.println("file compressed down to " + compressedData + " bytes");
-			System.out.println("Compressed in " + time + " milliseconds");
+			out.write(input);
+			
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static void expand(BufferedInputStream in, BufferedOutputStream out) {
+		try {
+			Inflater decompresser = new Inflater();
+		    decompresser.setInput(output, 0, compressedDataLength);
+		    
+		    byte[] result = new byte[100];
+		    int resultLength = decompresser.inflate(result);
+		    
+		    decompresser.end();
+		    
+		    out.write(result);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
