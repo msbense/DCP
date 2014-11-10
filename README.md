@@ -5,17 +5,16 @@ When you want DCP to act as a server:
     java -jar dcp.jar server [port] [path]
   where 
     [port] is the port the server will listen on, and 
-    [path] is the path to the directory containing the scripts
+    [path] is the path to the directory containing the files directory
   
 ===  
 When you want DCP to act as a client:
     
-    java -jar dcp.jar client [port] [host] [path] [alg] [file]
+    java -jar dcp.jar client [port] [host] [alg] [file]
   where 
     [port] is the port the client will connect to, 
     [host] is the ip/hostname of the server, 
-    [path] is the path to the directory containing the scripts, 
-    [alg] is the name of the script to run, and 
+    [alg] is the name of algorithm to use, and 
     [file] is the file to run it on
   
 Behavior
