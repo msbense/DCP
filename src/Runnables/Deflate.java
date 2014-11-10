@@ -5,7 +5,7 @@ import java.util.*;
 import java.io.*;
 
 public class Deflate  {
-	public static void main(String[] args) {
+	public static void compress() {
 		try {
 			Scanner scan = new Scanner(System.in);
 			double time ; //the time it takes to compress in milliseconds 
