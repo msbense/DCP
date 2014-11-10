@@ -33,7 +33,7 @@ public class AdaptiveArithmeticCompress {
 	}
 	
 	
-	static void compress(InputStream in, BitOutputStream out) throws IOException {
+	public static void compress(InputStream in, BitOutputStream out) throws IOException {
 		FrequencyTable freq = new SimpleFrequencyTable(new FlatFrequencyTable(257));  // Initialize with all symbol frequencies at 1
 		ArithmeticEncoder enc = new ArithmeticEncoder(out);
 		while (true) {

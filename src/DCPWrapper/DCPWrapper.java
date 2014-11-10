@@ -9,11 +9,14 @@ import Algorithms.BinaryStdOut;
 import Algorithms.Huffman;
 import Algorithms.LZW;
 import Algorithms.RunLength;
+import Arithmetic.AdaptiveArithmeticCompress;
+import Arithmetic.AdaptiveArithmeticDecompress;
+import Arithmetic.BitInputStream;
+import Arithmetic.BitOutputStream;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
 import org.apache.commons.lang3.time.StopWatch;
 /**
  *
@@ -35,11 +38,10 @@ public class DCPWrapper {
         }   
         else {
             host = args[2];
-            path = args[3];
-            alg = args[4];
-            file = args[5];
+            alg = args[3];
+            file = args[4];
             if (alg.equals("arithmeticcompress")){
-                file2 = args[6];
+                file2 = args[5];
             }
             client(host, Integer.parseInt(port));
         }
@@ -77,6 +79,9 @@ public class DCPWrapper {
             }
             else if (alg.equals("RunLength")){
                 RunLength.compress();
+            }
+            else if (alg.equals("arithmetic")){
+                AdaptiveArithmeticCompress.compress(fileIn, new BitOutputStream(out));
             }
             
             System.out.println("Compressed data sent");
@@ -119,6 +124,10 @@ public class DCPWrapper {
             else if (alg.equals("RunLength")){
                 RunLength.expand();
             }
+            else if (alg.equals("arithmetic")){
+                AdaptiveArithmeticDecompress.decompress(new BitInputStream(in), byteArray);
+            }
+            
         
         System.out.println(byteArray.toString() + "\n");
         
