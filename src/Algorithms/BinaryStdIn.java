@@ -46,6 +46,10 @@ public final class BinaryStdIn {
     // don't instantiate
     private BinaryStdIn() { }
     
+    public static void setInputStream(BufferedInputStream bis){
+        in = bis;
+    }
+    
     private static void fillBuffer() {
         try { 
         	buffer = in.read(); 

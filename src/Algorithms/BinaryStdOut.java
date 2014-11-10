@@ -41,6 +41,10 @@ public final class BinaryStdOut {
     // don't instantiate
     private BinaryStdOut() { }
 
+    public static void setOutputStream(BufferedOutputStream bos){
+        out = bos;
+    }
+    
    /**
      * Write the specified bit to standard output.
      */

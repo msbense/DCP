@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 package DCPWrapper;
+import Algorithms.BinaryStdIn;
+import Algorithms.BinaryStdOut;
 import Algorithms.Huffman;
 import java.io.*;
 import java.net.InetAddress;
@@ -59,31 +61,35 @@ public class DCPWrapper {
                 while ((file2 = in.readLine()).equals(null)){}
             }
             
-            System.out.println("cmd.exe " +  "/C " +  "cd " + path + " && " + alg + "compress " + file + ((!file2.equals("")) ? "" : " " + file2));
-            ProcessBuilder b = new ProcessBuilder("cmd.exe", "/C", "cd " + path + " && " + alg + "compress " + file + ((!file2.equals("")) ? "" : " " + file2));
-            b.redirectOutput(ProcessBuilder.Redirect.PIPE);
-            b.redirectError(ProcessBuilder.Redirect.PIPE);
-            Process process = b.start();
+//            System.out.println("cmd.exe " +  "/C " +  "cd " + path + " && " + alg + "compress " + file + ((!file2.equals("")) ? "" : " " + file2));
+//            ProcessBuilder b = new ProcessBuilder("cmd.exe", "/C", "cd " + path + " && " + alg + "compress " + file + ((!file2.equals("")) ? "" : " " + file2));
+//            b.redirectOutput(ProcessBuilder.Redirect.PIPE);
+//            b.redirectError(ProcessBuilder.Redirect.PIPE);
+//            Process process = b.start();
+//
+//            Scanner cmd = new Scanner(process.getInputStream());
+//            Scanner error = new Scanner(new InputStreamReader(process.getErrorStream()));
+//            while(error.hasNextLine()){
+//                System.out.println(error.nextLine());
+//            }
+            //int bufferSize = socket.getSendBufferSize();
+//            byte[] line = new byte[100000];
+//            int count = 0;
+//            System.out.println(cmd.nextLine());
+//            while (cmd.hasNextByte()){
+//                out.write(cmd.nextByte());
+//                System.out.println((byte) count);
+//            }
+            BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(new File(path + "/files/" + file + ".txt")));
+            BinaryStdIn.setInputStream(fileIn);
+            BinaryStdOut.setOutputStream(out);
             
-            Scanner cmd = new Scanner(process.getInputStream());
-            Scanner error = new Scanner(new InputStreamReader(process.getErrorStream()));
+            Huffman.compress();
             
-            while(error.hasNextLine()){
-                System.out.println(error.nextLine());
-            }
-            
-            int bufferSize = socket.getSendBufferSize();
-            byte[] line = new byte[100000];
-            int count = 0;
-            System.out.println(cmd.nextLine());
-            while (cmd.hasNextByte()){
-                out.write(cmd.nextByte());
-                System.out.println((byte) count);
-            }
-            
-            
+            in.close();
             out.close();
-            cmd.close();
+            fileIn.close();
+            //cmd.close();
             socket.close();
             
             
