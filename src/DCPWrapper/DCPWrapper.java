@@ -7,6 +7,8 @@ package DCPWrapper;
 import Algorithms.BinaryStdIn;
 import Algorithms.BinaryStdOut;
 import Algorithms.Huffman;
+import Algorithms.LZW;
+import Algorithms.RunLength;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -67,27 +69,32 @@ public class DCPWrapper {
             
             BinaryStdOut.setOutputStream(out);
             
-            Huffman.compress();
+            if (alg.equals("huffman")){
+                Huffman.compress();
+            }
+            else if (alg.equals("lzw")){
+                LZW.compress();
+            }
+            else if (alg.equals("RunLength")){
+                RunLength.compress();
+            }
+            
             System.out.println("Compressed data sent");
             in.close();
             out.close();
             fileIn.close();
             socket.close();
-            
-            
         }
           //close all
 
     }
 
     private static void client(String host, int port) throws IOException, InterruptedException {
-        
-        
+
         Socket socket = new Socket(InetAddress.getByName(host), port);
         System.out.println("Connected to host");
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        
-        
+                
         out.println(alg);
         out.println(file);
         
@@ -103,7 +110,15 @@ public class DCPWrapper {
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         BinaryStdOut.setOutputStream(new BufferedOutputStream(byteArray));
         
-        Huffman.expand();
+        if (alg.equals("huffman")){
+                Huffman.expand();
+            }
+            else if (alg.equals("lzw")){
+                LZW.expand();
+            }
+            else if (alg.equals("RunLength")){
+                RunLength.expand();
+            }
         
         System.out.println(byteArray.toString() + "\n");
         
@@ -114,6 +129,5 @@ public class DCPWrapper {
         in.close();
         socket.close();
         out.close();
-        
     }
 }
