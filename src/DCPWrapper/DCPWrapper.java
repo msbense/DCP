@@ -56,7 +56,7 @@ public class DCPWrapper {
             if (alg.equals("arithmeticcompress")){
                 while ((file2 = in.readLine()).equals(null)){}
             }
-            System.out.println("Recieved algorithm + filename");
+            System.out.println("Recieved + " + alg + " " + file);
 //          
             BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
             BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(new File(path + "/files/" + file + ".txt")));
@@ -72,11 +72,14 @@ public class DCPWrapper {
             else if (alg.equals("lzw")){
                 LZW.compress();
             }
-            else if (alg.equals("RunLength")){
+            else if (alg.toLowerCase().equals("runlength")){
                 RunLength.compress();
             }
             else if (alg.equals("arithmetic")){
                 AdaptiveArithmeticCompress.compress(fileIn, new BitOutputStream(out));
+            }
+            else if (alg.equals("deflate")){
+                
             }
             
             System.out.println("Compressed data sent");
@@ -97,9 +100,9 @@ public class DCPWrapper {
                 
         out.println(alg);
         out.println(file);
-        
         if (alg.equals("arithmeticcompress")) out.println(file2);
         System.out.println("Sent alg + file");
+        
         StopWatch stopwatch = new StopWatch();
         stopwatch.start();
         System.out.println("Stopwatch started");
@@ -120,7 +123,7 @@ public class DCPWrapper {
                 RunLength.expand();
             }
             else if (alg.equals("arithmetic")){
-                AdaptiveArithmeticDecompress.decompress(new BitInputStream(in), byteArray);
+                AdaptiveArithmeticDecompress.decompress(new BitInputStream(in), new BufferedOutputStream(byteArray));
             }
             
         
