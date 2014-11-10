@@ -32,7 +32,7 @@ import java.io.IOException;
  *  @author Kevin Wayne
  */
 public final class BinaryStdOut {
-    private static BufferedOutputStream out = new BufferedOutputStream(System.out);
+    private static BufferedOutputStream out;// = new BufferedOutputStream(System.out);
 
     private static int buffer;     // 8-bit buffer of bits to write out
     private static int N;          // number of bits remaining in buffer
@@ -43,6 +43,7 @@ public final class BinaryStdOut {
 
     public static void setOutputStream(BufferedOutputStream bos){
         out = bos;
+        System.out.println("out set");
     }
     
    /**

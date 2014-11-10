@@ -48,48 +48,30 @@ public class DCPWrapper {
         Socket socket;
         
         while (true){
-            
             socket = server.accept();
             System.out.println(socket.getRemoteSocketAddress().toString() + " connected");
         
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
-            
             while ((alg = in.readLine()).equals(null)){}
             while ((file = in.readLine()).equals(null)){}
             if (alg.equals("arithmeticcompress")){
                 while ((file2 = in.readLine()).equals(null)){}
             }
-            
-//            System.out.println("cmd.exe " +  "/C " +  "cd " + path + " && " + alg + "compress " + file + ((!file2.equals("")) ? "" : " " + file2));
-//            ProcessBuilder b = new ProcessBuilder("cmd.exe", "/C", "cd " + path + " && " + alg + "compress " + file + ((!file2.equals("")) ? "" : " " + file2));
-//            b.redirectOutput(ProcessBuilder.Redirect.PIPE);
-//            b.redirectError(ProcessBuilder.Redirect.PIPE);
-//            Process process = b.start();
-//
-//            Scanner cmd = new Scanner(process.getInputStream());
-//            Scanner error = new Scanner(new InputStreamReader(process.getErrorStream()));
-//            while(error.hasNextLine()){
-//                System.out.println(error.nextLine());
-//            }
-            //int bufferSize = socket.getSendBufferSize();
-//            byte[] line = new byte[100000];
-//            int count = 0;
-//            System.out.println(cmd.nextLine());
-//            while (cmd.hasNextByte()){
-//                out.write(cmd.nextByte());
-//                System.out.println((byte) count);
-//            }
+            System.out.println("Recieved algorithm + filename");
+//          
+            BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
             BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(new File(path + "/files/" + file + ".txt")));
+            System.out.println("Opened " + path + "/files/" + file + ".txt");
+            
             BinaryStdIn.setInputStream(fileIn);
+            
             BinaryStdOut.setOutputStream(out);
             
             Huffman.compress();
-            
+            System.out.println("Compressed data sent");
             in.close();
             out.close();
             fileIn.close();
-            //cmd.close();
             socket.close();
             
             
@@ -102,57 +84,33 @@ public class DCPWrapper {
         
         
         Socket socket = new Socket(InetAddress.getByName(host), port);
-        
+        System.out.println("Connected to host");
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
         
         
         out.println(alg);
         out.println(file);
-        if (alg.equals("arithmeticcompress")) out.println(file2);
         
+        if (alg.equals("arithmeticcompress")) out.println(file2);
+        System.out.println("Sent alg + file");
         StopWatch stopwatch = new StopWatch();
         stopwatch.start();
+        System.out.println("Stopwatch started");
         
-        BufferedOutputStream binWriter = new BufferedOutputStream(new FileOutputStream(new File(path + "/files/" + file + "compressed.bin")));
+        BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
         BinaryStdIn.setInputStream(in);
+        
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         BinaryStdOut.setOutputStream(new BufferedOutputStream(byteArray));
+        
         Huffman.expand();
-        System.out.println(byteArray.toString());
-//        int bufferSize = socket.getReceiveBufferSize();
-//        byte[] compressed = new byte[bufferSize];
-//        int count = 0;
-//        while ((count = in.read(compressed)) > 0){
-//            System.out.println(count);
-//            binWriter.write(count);
-//        }
-//        System.out.println("Wrote " + file + "compressed");
-//        System.out.println("cmd.exe" + "/C" + "cd " + path + " && " + alg + "decompress " + file + "compressed" + ((!file2.equals("")) ? "" : " " + file2));
-//        ProcessBuilder b = new ProcessBuilder("cmd.exe", "/C", "cd " + path + " && " + alg + "decompress " + file + "compressed" + ((!file2.equals("")) ? "" : " " + file2));
-//        b.redirectOutput(ProcessBuilder.Redirect.PIPE);
-//        b.redirectError(ProcessBuilder.Redirect.PIPE);
-//        Process process = b.start();
-//        Scanner scanner = new Scanner(new InputStreamReader(process.getInputStream()));
-//        Scanner error = new Scanner(new InputStreamReader(process.getErrorStream()));
-//        while(error.hasNextLine()){
-//                System.out.println(error.nextLine());
-//            }
-//        
-//        String line = "";
-//        while (scanner.hasNextLine()){
-//            line += scanner.nextLine();
-//        }
-//        
-        //System.out.println("");
         
-        
+        System.out.println(byteArray.toString() + "\n");
         
         stopwatch.stop();
-            
-        //System.out.println(line + "\n");
         System.out.println(stopwatch.getNanoTime() + " nanoseconds");
         
+        byteArray.close();
         in.close();
         socket.close();
         out.close();

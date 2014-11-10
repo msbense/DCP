@@ -34,20 +34,22 @@ import java.io.IOException;
  *  @author Kevin Wayne
  */
 public final class BinaryStdIn {
-    private static BufferedInputStream in = new BufferedInputStream(System.in);
+    private static BufferedInputStream in;// = new BufferedInputStream(System.in);
     private static final int EOF = -1;    // end of file
 
     private static int buffer;            // one character buffer
     private static int N;                 // number of bits left in buffer
 
     // static initializer
-    static { fillBuffer(); }
+    //static { fillBuffer(); }
 
     // don't instantiate
     private BinaryStdIn() { }
     
     public static void setInputStream(BufferedInputStream bis){
         in = bis;
+        fillBuffer();
+        System.out.println("in set");
     }
     
     private static void fillBuffer() {
