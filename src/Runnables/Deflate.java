@@ -11,7 +11,7 @@ import java.io.*;
 */
 public class Deflate  {
 	private static int compressedDataLength = 0;
-	private static byte[] output = {};
+	private static byte[] output;
 	private static int length = 0;
 	public static void compress(BufferedInputStream in, BufferedOutputStream out) {
 		try {
@@ -30,7 +30,11 @@ public class Deflate  {
 			
 			byte[] temp = new byte[input.length];
 			compressedDataLength = compressor.deflate(temp);
-			output = temp;
+			
+			output = new byte[compressedDataLength];
+			for(int i = 0; i < output.length; i++) {
+				output[i] = temp[i];
+			}
 			
 			compressor.end();
 			
