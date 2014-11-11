@@ -11,7 +11,8 @@ import java.io.*;
 */
 public class Deflate  {
 	private static int compressedDataLength = 0;
-	private static byte[] output = new byte[100];
+	private static byte[] output = {};
+	private static int length = 0;
 	public static void compress(BufferedInputStream in, BufferedOutputStream out) {
 		try {
 			//make string of data and convert to bits
@@ -19,13 +20,18 @@ public class Deflate  {
 			while(in.read() != -1) {
 				message += in.read();
 			}
+			
 			byte[] input = message.getBytes();
-		
+			length = input.length;
 			//compresses the data
 			Deflater compressor = new Deflater();
 			compressor.setInput(input);
 			compressor.finish();
-			compressedDataLength = compressor.deflate(output);
+			
+			byte[] temp = new byte[input.length];
+			compressedDataLength = compressor.deflate(temp);
+			output = temp;
+			
 			compressor.end();
 			
 			//outputs the data
@@ -41,7 +47,7 @@ public class Deflate  {
 			Inflater decompresser = new Inflater();
 		    decompresser.setInput(output, 0, compressedDataLength);
 		    
-		    byte[] result = new byte[100];
+		    byte[] result = new byte[length];
 		    int resultLength = decompresser.inflate(result);
 		    
 		    decompresser.end();
