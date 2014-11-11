@@ -22,7 +22,10 @@ public class DCPWrapper {
     static String host, port, role, path, alg, file, file2 = "";
     
     public static void main(String[] args) throws IOException, InterruptedException{
-        
+        if (args.length < 1){
+            System.out.println("No args found; see readme for usage");
+            return;
+        }
         role = args[0];
         port = args[1];
          //other computer
