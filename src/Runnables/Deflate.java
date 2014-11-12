@@ -5,6 +5,9 @@ import java.util.zip.Inflater;
 import java.util.*;
 import java.io.*;
 
+import Algorithms.BinaryStdIn;
+import Algorithms.BinaryStdOut;
+
 
 /** 
  * to decompress back into a string: String outputString = new String(result, 0, resultLength, "UTF-8"); 
@@ -36,10 +39,10 @@ public class Deflate  {
 			
 			compressor.end();
 			
-			//writes the head for the length of the compressed data
-			out.write(Integer.toBinaryString(compressedLength).getBytes());
-			//writes the original length of the message
-			out.write(Integer.toBinaryString(input.length).getBytes());
+			//write the headers
+			BinaryStdOut.setOutputStream(out);
+			BinaryStdOut.write(compressedLength); //length of compressed file
+			BinaryStdOut.write(input.length); //length of the uncompressed file
 			//outputs the data
 			out.write(input);
 			
@@ -50,15 +53,9 @@ public class Deflate  {
 	}
 	public static void expand(BufferedInputStream in, BufferedOutputStream out) {
 		try {
-			//reads the header
-			byte[] header1 = new byte[32]; //ints are 32 bits
-			in.read(header1);
-			byte[] header2 = new byte[32]; // ^^
-			in.read(header2);
-			
-			//sets the header to int values
-			int length = Integer.parseInt(new String(header2, "UTF-8"), 2);
-			int compressedDataLength = Integer.parseInt(new String(header1, "UTF-8"), 2);
+			BinaryStdIn.setIntputStream(in);
+			int compressedDataLength = BinaryStdIn.readInt();
+			int length = BinaryStdIn.readInt();
 			
 			//decompresses
 			Inflater decompresser = new Inflater();
