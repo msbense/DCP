@@ -8,6 +8,7 @@ import Arithmetic.AdaptiveArithmeticCompress;
 import Arithmetic.AdaptiveArithmeticDecompress;
 import Arithmetic.BitInputStream;
 import Arithmetic.BitOutputStream;
+import Runnables.Deflate;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -82,7 +83,7 @@ public class DCPWrapper {
                 AdaptiveArithmeticCompress.compress(fileIn, new BitOutputStream(out));
             }
             else if (alg.equals("deflate")){
-                
+                Deflate.compress(fileIn, out);
             }
             
             System.out.println("Compressed data sent");
@@ -127,6 +128,9 @@ public class DCPWrapper {
             }
             else if (alg.equals("arithmetic")){
                 AdaptiveArithmeticDecompress.decompress(new BitInputStream(in), new BufferedOutputStream(byteArray));
+            }
+            else if(alg.equals("deflate")){
+                Deflate.expand(in, new BufferedOutputStream(byteArray));
             }
             
         
