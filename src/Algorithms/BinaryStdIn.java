@@ -44,7 +44,7 @@ public final class BinaryStdIn {
     //static { fillBuffer(); }
 
     // don't instantiate
-    private BinaryStdIn() { }
+    public BinaryStdIn() { }
     
     public static void setInputStream(BufferedInputStream bis){
         in = bis;
