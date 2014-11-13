@@ -78,7 +78,7 @@ public class DCPWrapper {
                 LZW.compress();
             }
             else if (alg.toLowerCase().equals("runlength")){
-                 RunLength.compress(BinaryDump.compressToBinary());
+                 RunLength.compress();
             }
             else if (alg.toLowerCase().equals("arithmetic")){
                 AdaptiveArithmeticCompress.compress(fileIn, new BitOutputStream(out));
