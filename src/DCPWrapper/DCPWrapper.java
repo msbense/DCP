@@ -1,4 +1,5 @@
 package DCPWrapper;
+import Algorithms.BinaryDump;
 import Algorithms.BinaryStdIn;
 import Algorithms.BinaryStdOut;
 import Algorithms.Huffman;
@@ -70,19 +71,19 @@ public class DCPWrapper {
             
             BinaryStdOut.setOutputStream(out);
             
-            if (alg.equals("huffman")){
+            if (alg.toLowerCase().equals("huffman")){
                 Huffman.compress();
             }
-            else if (alg.equals("lzw")){
+            else if (alg.toLowerCase().equals("lzw")){
                 LZW.compress();
             }
             else if (alg.toLowerCase().equals("runlength")){
-                 RunLength.compress(BinaryDump.compressToBinary);
+                 RunLength.compress(BinaryDump.compressToBinary());
             }
-            else if (alg.equals("arithmetic")){
+            else if (alg.toLowerCase().equals("arithmetic")){
                 AdaptiveArithmeticCompress.compress(fileIn, new BitOutputStream(out));
             }
-            else if (alg.equals("deflate")){
+            else if (alg.toLowerCase().equals("deflate")){
                 Deflate.compress(fileIn, out);
             }
             

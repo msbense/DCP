@@ -16,13 +16,14 @@ public class Deflate  {
 	public static void compress(BufferedInputStream in, BufferedOutputStream out) {
 		int compressedLength;
 		try {
-			//make string of data and convert to bits
-			String message = "";
-			while(in.read() != -1) {
-				message += in.read();
+			//Read bytes directly into a dynamic byte array
+                        ByteArrayOutputStream inputStream = new ByteArrayOutputStream();
+                        
+                        int count = 0;
+			while( (count = in.read()) != -1) {
+                            inputStream.write(count);
 			}
-			
-			byte[] input = message.getBytes();
+			byte[] input = inputStream.toByteArray();
 			
 			//compresses the data
 			Deflater compressor = new Deflater();
@@ -53,7 +54,7 @@ public class Deflate  {
 	}
 	public static void expand(BufferedInputStream in, BufferedOutputStream out) {
 		try {
-			BinaryStdIn.setIntputStream(in);
+			BinaryStdIn.setInputStream(in);
 			int compressedDataLength = BinaryStdIn.readInt();
 			int length = BinaryStdIn.readInt();
 			
@@ -61,14 +62,14 @@ public class Deflate  {
 			Inflater decompresser = new Inflater();
 			byte[] output = new byte[compressedDataLength];
 			in.read(output);
-		    decompresser.setInput(output, 0, compressedDataLength);
+                        decompresser.setInput(output, 0, compressedDataLength);
 		    
-		    byte[] result = new byte[length];
-		    int resultLength = decompresser.inflate(result);
+                        byte[] result = new byte[length];
+                        int resultLength = decompresser.inflate(result);
 		    
-		    decompresser.end();
+                        decompresser.end();
 		    
-		    out.write(result);
+                        out.write(result);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
