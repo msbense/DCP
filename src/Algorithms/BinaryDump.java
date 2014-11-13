@@ -1,5 +1,7 @@
 package Algorithms;
 
+import java.io.*;
+
 /*************************************************************************
  *  Compilation:  javac BinaryDump.java
  *  Execution:    java BinaryDump N < file
@@ -47,5 +49,23 @@ public class BinaryDump {
         	StdOut.println();
         
         //StdOut.println(count + " bits");
+    }
+    
+    /**
+     * turns the current binaryStdIn buffer into a binary string so that the Run Length 
+     * algorithm can compress the file's data
+     * @return the binary string
+     */
+    public static String compressToBinary() {
+    	String output = "";
+    	while(!BinaryStdIn.isEmpty()) {
+    		if(BinaryStdIn.readBoolean()) {
+    			output += "1";
+    		}
+    		else {
+    			output += "0";
+    		}
+    	}
+    	return output;
     }
 }
