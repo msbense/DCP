@@ -60,6 +60,7 @@ public class DCPWrapper {
             socket = server.accept();
             System.out.println(socket.getRemoteSocketAddress().toString() + " connected");
         
+            
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             while ((alg = in.readLine()).equals(null)){}
             while ((file = in.readLine()).equals(null)){}
