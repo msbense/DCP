@@ -89,7 +89,8 @@ public class DCPWrapper {
             	/* try changing Input stream to simply:
             	 * InputStream ArtihIn = fileIn;
             	 * 
-            	 * *do this so that the I/O streams will match exactly the I/O streams that work in the Arithmetic Compression program 
+            	 * *do this so that the I/O streams will match exactly the I/O 
+            	 * streams that work in the Arithmetic Compression program 
             	 */
                 AdaptiveArithmeticCompress.compress(fileIn, new BitOutputStream(socket.getOutputStream()));
             }
