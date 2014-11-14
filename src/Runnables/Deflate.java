@@ -42,7 +42,9 @@ public class Deflate  {
 			
 			//write the headers
 			BinaryStdOut.write(compressedLength); //length of compressed file
+                        System.out.println("Wrote len of comprssed file");
 			BinaryStdOut.write(input.length); //length of the uncompressed file
+                        System.out.println("Wrote len of uncompressed file");
 			//outputs the data
 			out.write(input);
 			
