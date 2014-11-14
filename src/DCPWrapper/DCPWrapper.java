@@ -86,6 +86,11 @@ public class DCPWrapper {
                  RunLength.compress();
             }
             else if (alg.toLowerCase().equals("arithmetic")){
+            	/* try changing Input stream to simply:
+            	 * InputStream ArtihIn = fileIn;
+            	 * 
+            	 * *do this so that the I/O streams will match exactly the I/O streams that work in the Arithmetic Compression program 
+            	 */
                 AdaptiveArithmeticCompress.compress(fileIn, new BitOutputStream(socket.getOutputStream()));
             }
             else if (alg.toLowerCase().equals("deflate")){
@@ -133,6 +138,10 @@ public class DCPWrapper {
                 RunLength.expand();
             }
             else if (alg.equals("arithmetic")){
+            	/* Try changing the BufferedOutputStream into an OutputStream
+            	 * so that the IO streams will match those in the Arithmetic decmopression program
+            	 * 
+            	 */
                 AdaptiveArithmeticDecompress.decompress(new BitInputStream(socket.getInputStream()), new BufferedOutputStream(byteArray));
             }
             else if(alg.equals("deflate")){
