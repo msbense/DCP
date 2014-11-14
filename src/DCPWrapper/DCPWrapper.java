@@ -81,7 +81,7 @@ public class DCPWrapper {
                  RunLength.compress();
             }
             else if (alg.toLowerCase().equals("arithmetic")){
-                AdaptiveArithmeticCompress.compress(fileIn, new BitOutputStream(out));
+                AdaptiveArithmeticCompress.compress(fileIn, new BitOutputStream(socket.getOutputStream()));
             }
             else if (alg.toLowerCase().equals("deflate")){
                 Deflate.compress(fileIn, out);
@@ -128,7 +128,7 @@ public class DCPWrapper {
                 RunLength.expand();
             }
             else if (alg.equals("arithmetic")){
-                AdaptiveArithmeticDecompress.decompress(new BitInputStream(in), new BufferedOutputStream(byteArray));
+                AdaptiveArithmeticDecompress.decompress(new BitInputStream(socket.getInputStream()), new BufferedOutputStream(byteArray));
             }
             else if(alg.equals("deflate")){
                 Deflate.expand(in, new BufferedOutputStream(byteArray));
