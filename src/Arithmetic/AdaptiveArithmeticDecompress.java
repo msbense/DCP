@@ -36,12 +36,15 @@ public class AdaptiveArithmeticDecompress {
 	public static void decompress(BitInputStream in, OutputStream out) throws IOException {
 		FrequencyTable freq = new SimpleFrequencyTable(new FlatFrequencyTable(257));  // Initialize with all symbol frequencies at 1
 		ArithmeticDecoder dec = new ArithmeticDecoder(in);
+                
 		while (true) {
 			int symbol = dec.read(freq);
 			if (symbol == 256)  // EOF symbol
 				break;
 			out.write(symbol);
+                        
 			freq.increment(symbol);
+                        
 		}
 	}
 	

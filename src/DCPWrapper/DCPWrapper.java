@@ -60,7 +60,6 @@ public class DCPWrapper {
             socket = server.accept();
             System.out.println(socket.getRemoteSocketAddress().toString() + " connected");
         
-            
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             while ((alg = in.readLine()).equals(null)){}
             while ((file = in.readLine()).equals(null)){}
@@ -98,13 +97,14 @@ public class DCPWrapper {
             socket.getOutputStream().write(compressed, 0, compressed.length);
             
             System.out.println("Compressed data sent");
+            bArrayout.close();
+            bitout.close();
             in.close();
             out.close();
             fileIn.close();
             socket.close();
         }
           //close all
-
     }
 
     private static void client(String host, int port) throws IOException, InterruptedException {
@@ -161,8 +161,13 @@ public class DCPWrapper {
         stopwatch.stop();
         System.out.println(stopwatch.getNanoTime() + " nanoseconds");
         
+        socketBytes.close();
         byteArray.close();
-        in.close();
+        sock.close();
+        cArray.close();
+        soc.close();
+        bufferedOut.close();
+        bitsoc.close();
         socket.close();
         out.close();
     }
