@@ -33,7 +33,12 @@ public class DCPWrapper {
          //other computer
                                                                 
         if (role.equals("server")){
-            path = args[2];
+           if(args.length == 2) {
+        		path = "";
+        	}
+        	else {
+        		path = args[2];
+        	}
             server(Integer.parseInt(port));
         }   
         else {
@@ -64,7 +69,7 @@ public class DCPWrapper {
             System.out.println("Recieved + " + alg + " " + file);
 //          
             BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
-            BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(new File(path + "/files/" + file + ".txt")));
+            BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(new File(path + "files/" + file + ".txt")));
             System.out.println("Opened " + path + "/files/" + file + ".txt");
             
             BinaryStdIn.setInputStream(fileIn);
