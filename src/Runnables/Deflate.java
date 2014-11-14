@@ -41,7 +41,6 @@ public class Deflate  {
 			compressor.end();
 			
 			//write the headers
-			BinaryStdOut.setOutputStream(out);
 			BinaryStdOut.write(compressedLength); //length of compressed file
 			BinaryStdOut.write(input.length); //length of the uncompressed file
 			//outputs the data
@@ -54,7 +53,6 @@ public class Deflate  {
 	}
 	public static void expand(BufferedInputStream in, BufferedOutputStream out) {
 		try {
-			BinaryStdIn.setInputStream(in);
 			int compressedDataLength = BinaryStdIn.readInt();
 			int length = BinaryStdIn.readInt();
 			
