@@ -68,10 +68,12 @@ public class DCPWrapper {
                 while ((file2 = in.readLine()).equals(null)){}
             }
             System.out.println("Recieved + " + alg + " " + file);
-//          
-            BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
+            ByteArrayOutputStream bArrayout = new ByteArrayOutputStream();
+            BufferedOutputStream out = new BufferedOutputStream(bArrayout);
+            BitOutputStream bitout = new BitOutputStream(out);
             BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(new File(path + "files/" + file + ".txt")));
             System.out.println("Opened " + path + "/files/" + file + ".txt");
+            
             
             BinaryStdIn.setInputStream(fileIn);
             
@@ -87,11 +89,13 @@ public class DCPWrapper {
                  RunLength.compress();
             }
             else if (alg.toLowerCase().equals("arithmetic")){
-                AdaptiveArithmeticCompress.compress(fileIn, new BitOutputStream(socket.getOutputStream()));
+                AdaptiveArithmeticCompress.compress(fileIn, bitout);
             }
             else if (alg.toLowerCase().equals("deflate")){
                 Deflate.compress(fileIn, out);
             }
+            byte[] compressed = bArrayout.toByteArray();
+            socket.getOutputStream().write(compressed, 0, compressed.length);
             
             System.out.println("Compressed data sent");
             in.close();
@@ -119,11 +123,21 @@ public class DCPWrapper {
         System.out.println("Stopwatch started");
         
         
-        BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
-        BinaryStdIn.setInputStream(in);
+        ByteArrayOutputStream socketBytes = new ByteArrayOutputStream();
+        InputStream sock = socket.getInputStream();
+        byte[] buffer = new byte[256];
+        int count = 0;
+        while ((count = sock.read(buffer)) > 0){
+            socketBytes.write(buffer, 0, count);
+        }
+        ByteArrayInputStream cArray = new ByteArrayInputStream(socketBytes.toByteArray());
+        BufferedInputStream soc = new BufferedInputStream(cArray);
+        BitInputStream bitsoc = new BitInputStream(soc);
+        BinaryStdIn.setInputStream(soc);
         
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-        BinaryStdOut.setOutputStream(new BufferedOutputStream(byteArray));
+        BufferedOutputStream bufferedOut = new BufferedOutputStream(byteArray);
+        BinaryStdOut.setOutputStream(bufferedOut);
         
         if (alg.equals("huffman")){
                 Huffman.expand();
@@ -135,10 +149,10 @@ public class DCPWrapper {
                 RunLength.expand();
             }
             else if (alg.equals("arithmetic")){
-                AdaptiveArithmeticDecompress.decompress(new BitInputStream(socket.getInputStream()), new BufferedOutputStream(byteArray));
+                AdaptiveArithmeticDecompress.decompress(bitsoc, bufferedOut);
             }
             else if(alg.equals("deflate")){
-                Deflate.expand(in, new BufferedOutputStream(byteArray));
+                Deflate.expand(soc, bufferedOut);
             }
             
         
