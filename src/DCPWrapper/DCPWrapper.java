@@ -81,7 +81,6 @@ public class DCPWrapper {
                  RunLength.compress();
             }
             else if (alg.toLowerCase().equals("arithmetic")){
-                InputStream arithIn = new BufferedInputStream(fileIn);
                 AdaptiveArithmeticCompress.Comp(bis, bos);
                 bis.close();
                 bos.close();
@@ -110,7 +109,7 @@ public class DCPWrapper {
         out.println(alg);
         out.println(file);
         if (alg.equals("arithmeticcompress")) out.println(file2);
-        System.out.println("Sent " + alg + " and " +  file);
+        System.out.println("Sent alg + file");
         
         StopWatch stopwatch = new StopWatch();
         stopwatch.start();
@@ -131,6 +130,7 @@ public class DCPWrapper {
                 bis.close();
                 bos.close();
             }
+            
             else if (alg.equals("RunLength")){
                 RunLength.expand();
             }
@@ -140,13 +140,10 @@ public class DCPWrapper {
                 bos.close();
             }
             else if(alg.equals("deflate")){
-                DeflateDecompress(bis, bos);
+                Deflate.expand(bis, bos);
                 bis.close();
                 bos.close();
             }
-            
-        bos.flush();
-        byteArray.flush();
         System.out.println(byteArray.toString() + "\n");
         
         stopwatch.stop();
@@ -197,17 +194,7 @@ public class DCPWrapper {
             System.out.println("Exception in LZWDecompress");
         }
     }
-    public static void DeflateCompress(BufferedInputStream bis, BufferedOutputStream bos) {
-    	  BinaryStdIn.setInputStream(bis);
-          BinaryStdOut.setOutputStream(bos);
-          Deflate.compress(bis, bos);
-    }
-    public static void DeflateDecompress(BufferedInputStream bis, BufferedOutputStream bos) {
-    	 BinaryStdIn.setInputStream(bis);
-         BinaryStdOut.setOutputStream(bos);
-         Deflate.expand(bis, bos);
-    }
+    
     public static void RunLengthCompress(){}
     public static void RunLengthDecompress(){}
 }
-
