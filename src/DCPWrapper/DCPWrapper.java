@@ -1,4 +1,5 @@
 package DCPWrapper;
+
 import Algorithms.BinaryStdIn;
 import Algorithms.BinaryStdOut;
 import Algorithms.Huffman;
@@ -11,6 +12,8 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.io.IOUtils;
 /**
@@ -55,13 +58,16 @@ public class DCPWrapper {
             socket = server.accept();
             System.out.println(socket.getRemoteSocketAddress().toString() + " connected");
         
+            
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             while ((alg = in.readLine()).equals(null)){}
             while ((file = in.readLine()).equals(null)){}
             System.out.println("Recieved " + alg + " + " + file);
             System.out.println("Opened " + path + "/files/" + file + ".txt");
             
-            FileInputStream fileIn = new FileInputStream(new File(path + "/files/" + file + ".txt"));
+            FileInputStream fileIn = new FileInputStream(new File(path + "files/" + file + ".txt"));
+            ByteArrayOutputStream bArrayout = new ByteArrayOutputStream();
+            
             
             BufferedInputStream bis = new BufferedInputStream(fileIn);
             OutputStream sock = socket.getOutputStream();
@@ -86,11 +92,18 @@ public class DCPWrapper {
                 bos.close();
             }
             else if (alg.toLowerCase().equals("deflate")){
-                Deflate.compress(bis, bos);
-                bis.close();
-                bos.close();
+               DeflateCompress(bis, bos);
+               bis.close();
+               bos.close();
             }
-           
+            
+            bArrayout.flush();
+            byte[] compressed = bArrayout.toByteArray();
+            System.out.println(compressed[45]);
+            OutputStream s = socket.getOutputStream();
+            IOUtils.write(compressed, s);    
+            
+            s.flush();
             System.out.println("Compressed data sent");
             System.out.println("");
             
@@ -100,7 +113,7 @@ public class DCPWrapper {
             fileIn.close();
             socket.close();
         }
-          //close all
+        //close all
     }
 
     private static void client(String host, int port) throws IOException, InterruptedException {
@@ -112,12 +125,16 @@ public class DCPWrapper {
         out.println(alg);
         out.println(file);
         if (alg.equals("arithmeticcompress")) out.println(file2);
-        System.out.println("Sent alg + file");
+        System.out.println("Sent " + alg + " and " +  file);
         
         StopWatch stopwatch = new StopWatch();
         stopwatch.start();
         System.out.println("Stopwatch started");
         
+        InputStream sock = socket.getInputStream();
+        byte[] sockToByte = IOUtils.toByteArray(sock);
+        System.out.println(sockToByte[45]);
+        ByteArrayInputStream cArray = new ByteArrayInputStream(sockToByte);
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         InputStream sock = socket.getInputStream();
         BufferedInputStream bis = new BufferedInputStream(sock);
@@ -133,7 +150,6 @@ public class DCPWrapper {
                 bis.close();
                 bos.close();
             }
-            
             else if (alg.equals("RunLength")){
                 RunLength.expand();
             }
@@ -143,16 +159,21 @@ public class DCPWrapper {
                 bos.close();
             }
             else if(alg.equals("deflate")){
-                Deflate.expand(bis, bos);
+                DeflateDecompress(bis, bos);
                 bis.close();
                 bos.close();
             }
-        System.out.println(byteArray.toString() + "\n");
+            
+        bos.flush();
+        byteArray.flush();
+        //System.out.println(byteArray.toString() + "\n");
         
         stopwatch.stop();
         System.out.println(stopwatch.getNanoTime() + " nanoseconds");
         
         byteArray.close();
+        sock.close();
+        cArray.close();
         socket.close();
         out.close();
     }
@@ -197,7 +218,17 @@ public class DCPWrapper {
             System.out.println("Exception in LZWDecompress");
         }
     }
-    
+    public static void DeflateCompress(BufferedInputStream bis, BufferedOutputStream bos) {
+    	  BinaryStdIn.setInputStream(bis);
+          BinaryStdOut.setOutputStream(bos);
+          Deflate.compress(bis, bos);
+    }
+    public static void DeflateDecompress(BufferedInputStream bis, BufferedOutputStream bos) {
+    	 BinaryStdIn.setInputStream(bis);
+         BinaryStdOut.setOutputStream(bos);
+         Deflate.expand(bis, bos);
+    }
     public static void RunLengthCompress(){}
     public static void RunLengthDecompress(){}
 }
+
