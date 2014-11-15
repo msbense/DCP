@@ -21,7 +21,6 @@ public class Deflate  {
 			Deflater compressor = new Deflater();
 			compressor.setInput(input);
 			compressor.finish();
-			
 			byte[] temp = new byte[input.length];
 			int compressedLength = compressor.deflate(temp);
 			
@@ -46,7 +45,6 @@ public class Deflate  {
                         
                     DataInputStream intReader = new DataInputStream(in);
                     int length = intReader.readInt();
-
 			//decompresses
 			Inflater decompresser = new Inflater();
 

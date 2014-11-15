@@ -130,6 +130,7 @@ public class DCPWrapper {
                 bis.close();
                 bos.close();
             }
+            
             else if (alg.equals("RunLength")){
                 RunLength.expand();
             }
