@@ -64,7 +64,7 @@ public class DCPWrapper {
             System.out.println("Recieved " + alg + " + " + file);
             System.out.println("Opened " + path + "/files/" + file + ".txt");
             
-            FileInputStream fileIn = new FileInputStream(new File(path + "/files/" + file + ".txt"));
+            FileInputStream fileIn = new FileInputStream(new File(path + "files/" + file + ".txt"));
             ByteArrayOutputStream bArrayout = new ByteArrayOutputStream();
             
             
@@ -90,13 +90,13 @@ public class DCPWrapper {
                 bis.close();
                 bos.close();
             }
-//            else if (alg.toLowerCase().equals("deflate")){
-//                Deflate.compress((BufferedInputStream)fileIn, out);
-//            }
+            else if (alg.toLowerCase().equals("deflate")){
+                Deflate.compress(bis, bos);
+            }
             
-//            bArrayout.flush();
+            bArrayout.flush();
             byte[] compressed = bArrayout.toByteArray();
-            System.out.println(compressed[45]);
+            //System.out.println(compressed[45]);
             OutputStream s = socket.getOutputStream();
             IOUtils.write(compressed, s);
             s.flush();
@@ -127,7 +127,7 @@ public class DCPWrapper {
         
         InputStream sock = socket.getInputStream();
         byte[] sockToByte = IOUtils.toByteArray(sock);
-        System.out.println(sockToByte[45]);
+        //System.out.println(sockToByte[45]);
         ByteArrayInputStream cArray = new ByteArrayInputStream(sockToByte);
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         
@@ -152,12 +152,12 @@ public class DCPWrapper {
                 bis.close();
                 bos.close();
             }
-//            else if(alg.equals("deflate")){
-//                Deflate.expand(soc, bufferedOut);
-//            }
+            else if(alg.equals("deflate")){
+                Deflate.expand(bis, bos);
+            }
             
-        //bufferedOut.flush();
-        //byteArray.flush();
+        bos.flush();
+        byteArray.flush();
         System.out.println(byteArray.toString() + "\n");
         
         stopwatch.stop();
