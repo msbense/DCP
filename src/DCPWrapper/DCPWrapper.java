@@ -73,7 +73,7 @@ public class DCPWrapper {
                 bos.close();
             }
             else if (alg.toLowerCase().equals("lzw")){
-                LZWDecompress(bis, bos);
+                LZWCompress(bis, bos);
                 bis.close();
                 bos.close();
             }
