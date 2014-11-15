@@ -73,7 +73,6 @@ public class DCPWrapper {
                 bos.close();
             }
             else if (alg.toLowerCase().equals("lzw")){
-                
                 LZWDecompress(bis, bos);
                 bis.close();
                 bos.close();
@@ -140,8 +139,6 @@ public class DCPWrapper {
                 bos.close();
             }
             else if(alg.equals("deflate")){
-                BinaryStdIn.setInputStream(bis);
-                BinaryStdOut.setOutputStream(bos);
                 Deflate.expand(bis, bos);
                 bis.close();
                 bos.close();
