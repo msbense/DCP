@@ -91,7 +91,9 @@ public class DCPWrapper {
                 bos.close();
             }
             else if (alg.toLowerCase().equals("deflate")){
-                Deflate.compress(bis, bos);
+               DeflateCompress(bis, bos);
+               bis.close();
+               bos.close();
             }
             
             bArrayout.flush();
@@ -153,7 +155,9 @@ public class DCPWrapper {
                 bos.close();
             }
             else if(alg.equals("deflate")){
-                Deflate.expand(bis, bos);
+                DeflateDecompress(bis, bos);
+                bis.close();
+                bos.close();
             }
             
         bos.flush();
@@ -210,7 +214,17 @@ public class DCPWrapper {
             System.out.println("Exception in LZWDecompress");
         }
     }
-    
+    public static void DeflateCompress(BufferedInputStream bis, BufferedOutputStream bos) {
+    	  BinaryStdIn.setInputStream(bis);
+          BinaryStdOut.setOutputStream(bos);
+          Deflate.compress(bis, bos);
+    }
+    public static void DeflateDecompress(BufferedInputStream bis, BufferedOutputStream bos) {
+    	 BinaryStdIn.setInputStream(bis);
+         BinaryStdOut.setOutputStream(bos);
+         Deflate.expand(bis, bos);
+    }
     public static void RunLengthCompress(){}
     public static void RunLengthDecompress(){}
 }
+
