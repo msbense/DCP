@@ -94,13 +94,15 @@ public class DCPWrapper {
 //                Deflate.compress((BufferedInputStream)fileIn, out);
 //            }
             
-//            bArrayout.flush();
-            byte[] compressed = bArrayout.toByteArray();
-            System.out.println(compressed[45]);
+            bArrayout.flush();
+            byte[] compressed = bArrayout.toByteArray();           
             OutputStream s = socket.getOutputStream();
             IOUtils.write(compressed, s);
             s.flush();
             System.out.println("Compressed data sent");
+            ByteArrayOutputStream bouts = new ByteArrayOutputStream();
+            AdaptiveArithmeticDecompress.Decomp(new BufferedInputStream(new ByteArrayInputStream(compressed)), new BufferedOutputStream(bouts));
+            System.out.println(bouts.toString());
             
             bArrayout.close();
             in.close();
@@ -127,8 +129,8 @@ public class DCPWrapper {
         
         InputStream sock = socket.getInputStream();
         byte[] sockToByte = IOUtils.toByteArray(sock);
-        System.out.println(sockToByte[45]);
         ByteArrayInputStream cArray = new ByteArrayInputStream(sockToByte);
+        
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         
         BufferedInputStream bis = new BufferedInputStream(cArray);
@@ -156,8 +158,7 @@ public class DCPWrapper {
 //                Deflate.expand(soc, bufferedOut);
 //            }
             
-        //bufferedOut.flush();
-        //byteArray.flush();
+        byteArray.flush();
         System.out.println(byteArray.toString() + "\n");
         
         stopwatch.stop();
