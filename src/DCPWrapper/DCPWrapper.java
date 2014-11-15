@@ -1,4 +1,5 @@
 package DCPWrapper;
+
 import Algorithms.BinaryStdIn;
 import Algorithms.BinaryStdOut;
 import Algorithms.Huffman;
@@ -6,8 +7,6 @@ import Algorithms.LZW;
 import Algorithms.RunLength;
 import Arithmetic.AdaptiveArithmeticCompress;
 import Arithmetic.AdaptiveArithmeticDecompress;
-import Arithmetic.BitOutputStream;
-import Arithmetic.BitInputStream;
 import Runnables.Deflate;
 import java.io.*;
 import java.net.InetAddress;
@@ -87,10 +86,7 @@ public class DCPWrapper {
                  RunLength.compress();
             }
             else if (alg.toLowerCase().equals("arithmetic")){
-            	InputStream arithIn = new BufferedInputStream(fileIn);
-            	BitOutputStream arithOut = new BitOutputStream(bos);
-            	
-                AdaptiveArithmeticCompress.compress(arithIn, arithOut);
+                AdaptiveArithmeticCompress.Comp(bis, bos);
                 bis.close();
                 bos.close();
             }
