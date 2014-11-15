@@ -2,6 +2,8 @@ package Arithmetic;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,6 +13,29 @@ import java.io.OutputStream;
 
 public class AdaptiveArithmeticDecompress {
 	
+        public static void Decomp(ByteArrayInputStream DecompressionInputStream, ByteArrayOutputStream DecompressionOutputStream){
+            
+            BufferedInputStream din = new BufferedInputStream(DecompressionInputStream);
+            BitInputStream Din = new BitInputStream(din);
+            OutputStream Dout = new BufferedOutputStream(DecompressionOutputStream);
+            try {
+                decompress(Din, Dout);
+            } catch (IOException ex) {
+                System.out.println("IO Exception in AdaptivearithmeticCompress.decompress");
+            } finally {
+                try {
+                    Dout.close();
+                } catch (IOException ex) {
+                    System.out.println("IO Exception in AdaptivearithmeticCompress.Decomp");
+                }
+                try {
+                    Din.close();
+                } catch (IOException ex) {
+                    System.out.println("IO Exception in AdaptivearithmeticCompress.Decomp");
+                }
+            }
+        }
+    
 	public static void main(String[] args) throws IOException {
 		// Show what command line arguments to use
 		if (args.length == 0) {

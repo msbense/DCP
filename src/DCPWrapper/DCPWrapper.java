@@ -1,5 +1,4 @@
 package DCPWrapper;
-import Algorithms.BinaryDump;
 import Algorithms.BinaryStdIn;
 import Algorithms.BinaryStdOut;
 import Algorithms.Huffman;
@@ -14,8 +13,8 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.commons.io.IOUtils;
 /**
  *
  * @author mbense
@@ -95,7 +94,7 @@ public class DCPWrapper {
             bArrayout.flush();
             byte[] compressed = bArrayout.toByteArray();
             OutputStream s = socket.getOutputStream();
-            s.write(compressed, 0, compressed.length);
+            IOUtils.write(compressed, s);
             s.flush();
             System.out.println(compressed.length);
             System.out.println("Compressed data sent");
@@ -127,23 +126,15 @@ public class DCPWrapper {
         stopwatch.start();
         System.out.println("Stopwatch started");
         
-        
-        ByteArrayOutputStream socketBytes = new ByteArrayOutputStream();
         InputStream sock = socket.getInputStream();
-        byte[] buffer = new byte[256];
-        int count = 0;
-        System.out.println("entering loop");
-        while ((count = sock.read(buffer)) > 0){
-            socketBytes.write(buffer, 0, count);
-            System.out.print(Arrays.toString(buffer));
-        }
         
-        socketBytes.flush();
-        ByteArrayInputStream cArray = new ByteArrayInputStream(socketBytes.toByteArray());
+        byte[] compressed = IOUtils.toByteArray(sock);
+        
+        ByteArrayInputStream cArray = new ByteArrayInputStream(compressed);
         BufferedInputStream soc = new BufferedInputStream(cArray);
-        BitInputStream bitsoc = new BitInputStream(cArray);
+        BitInputStream bitsoc = new BitInputStream(soc);
         BinaryStdIn.setInputStream(soc);
-        
+
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         BufferedOutputStream bufferedOut = new BufferedOutputStream(byteArray);
         BinaryStdOut.setOutputStream(bufferedOut);
@@ -171,7 +162,6 @@ public class DCPWrapper {
         stopwatch.stop();
         System.out.println(stopwatch.getNanoTime() + " nanoseconds");
         
-        socketBytes.close();
         byteArray.close();
         sock.close();
         cArray.close();
