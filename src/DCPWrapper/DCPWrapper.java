@@ -100,7 +100,8 @@ public class DCPWrapper {
             byte[] compressed = bArrayout.toByteArray();
             System.out.println(compressed[45]);
             OutputStream s = socket.getOutputStream();
-            IOUtils.write(compressed, s);
+            IOUtils.write(compressed, s);    
+            
             s.flush();
             System.out.println("Compressed data sent");
             
@@ -109,7 +110,7 @@ public class DCPWrapper {
             fileIn.close();
             socket.close();
         }
-          //close all
+        //close all
     }
 
     private static void client(String host, int port) throws IOException, InterruptedException {
@@ -163,8 +164,6 @@ public class DCPWrapper {
         bos.flush();
         byteArray.flush();
         //System.out.println(byteArray.toString() + "\n");
-        BufferedWriter bw = new BufferedWriter(new FileWriter(new File("files/decompressed.txt")));
-        bw.write(byteArray.toString());
         
         stopwatch.stop();
         System.out.println(stopwatch.getNanoTime() + " nanoseconds");
