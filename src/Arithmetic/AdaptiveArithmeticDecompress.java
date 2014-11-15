@@ -9,6 +9,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class AdaptiveArithmeticDecompress {
@@ -20,6 +22,14 @@ public class AdaptiveArithmeticDecompress {
                 decompress(Din, DecompressionOutputStream);
             } catch (IOException ex) {
                 System.out.println("IO Exception in AdaptivearithmeticCompress.decompress");
+            }
+            finally{
+                try {
+                    Din.close();
+                    DecompressionOutputStream.close();
+                } catch (IOException ex) {
+                    System.out.println("Error closing streams for ArithmeticDecomp");
+                }
             }
         }
     

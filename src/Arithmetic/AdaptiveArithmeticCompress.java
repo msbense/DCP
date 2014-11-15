@@ -20,6 +20,15 @@ public class AdaptiveArithmeticCompress {
             catch (IOException e){
                 System.out.println("IO Exception in AdaptivearithmeticCompress.compress");
             }  
+            finally{
+                try {
+                        Cout.close();
+                        CompressionInputStream.close();
+                    } catch (IOException ex) {
+                        System.out.println("Error closing streams for AruthmeticComp");
+                    }
+                    
+            }
         }
         
         public static void main(String[] args) throws IOException {
