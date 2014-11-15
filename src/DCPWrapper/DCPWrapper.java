@@ -73,7 +73,6 @@ public class DCPWrapper {
                 bos.close();
             }
             else if (alg.toLowerCase().equals("lzw")){
-                
                 LZWDecompress(bis, bos);
                 bis.close();
                 bos.close();
@@ -82,6 +81,7 @@ public class DCPWrapper {
                  RunLength.compress();
             }
             else if (alg.toLowerCase().equals("arithmetic")){
+                InputStream arithIn = new BufferedInputStream(fileIn);
                 AdaptiveArithmeticCompress.Comp(bis, bos);
                 bis.close();
                 bos.close();
@@ -140,12 +140,13 @@ public class DCPWrapper {
                 bos.close();
             }
             else if(alg.equals("deflate")){
-                BinaryStdIn.setInputStream(bis);
-                BinaryStdOut.setOutputStream(bos);
-                Deflate.expand(bis, bos);
+                DeflateDecompress(bis, bos);
                 bis.close();
                 bos.close();
             }
+            
+        bos.flush();
+        byteArray.flush();
         System.out.println(byteArray.toString() + "\n");
         
         stopwatch.stop();
@@ -196,7 +197,17 @@ public class DCPWrapper {
             System.out.println("Exception in LZWDecompress");
         }
     }
-    
+    public static void DeflateCompress(BufferedInputStream bis, BufferedOutputStream bos) {
+    	  BinaryStdIn.setInputStream(bis);
+          BinaryStdOut.setOutputStream(bos);
+          Deflate.compress(bis, bos);
+    }
+    public static void DeflateDecompress(BufferedInputStream bis, BufferedOutputStream bos) {
+    	 BinaryStdIn.setInputStream(bis);
+         BinaryStdOut.setOutputStream(bos);
+         Deflate.expand(bis, bos);
+    }
     public static void RunLengthCompress(){}
     public static void RunLengthDecompress(){}
 }
+
