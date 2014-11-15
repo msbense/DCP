@@ -110,7 +110,7 @@ public class DCPWrapper {
         out.println(alg);
         out.println(file);
         if (alg.equals("arithmeticcompress")) out.println(file2);
-        System.out.println("Sent alg + file");
+        System.out.println("Sent " + alg + " and " +  file);
         
         StopWatch stopwatch = new StopWatch();
         stopwatch.start();
