@@ -7,12 +7,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 
 public class AdaptiveArithmeticDecompress {
 	
-        public static void Decomp(BufferedInputStream DecompressionInputStream, BufferedOutputStream DecompressionOutputStream){
+        public static void Decomp(InputStream DecompressionInputStream, OutputStream DecompressionOutputStream){
             
             BitInputStream Din = new BitInputStream(DecompressionInputStream);
             try {

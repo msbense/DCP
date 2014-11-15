@@ -7,23 +7,18 @@ import java.io.*;
 
 import Algorithms.BinaryStdIn;
 import Algorithms.BinaryStdOut;
+import org.apache.commons.io.IOUtils;
 
 
 /** 
  * to decompress back into a string: String outputString = new String(result, 0, resultLength, "UTF-8"); 
 */
 public class Deflate  {
-	public static void compress(BufferedInputStream in, BufferedOutputStream out) {
+	public static void compress(InputStream in, OutputStream out) {
 		int compressedLength;
 		try {
 			//Read bytes directly into a dynamic byte array
-                        ByteArrayOutputStream inputStream = new ByteArrayOutputStream();
-                        
-                        int count = 0;
-			while( (count = in.read()) != -1) {
-                            inputStream.write(count);
-			}
-			byte[] input = inputStream.toByteArray();
+                        byte[] input = IOUtils.toByteArray(in);
 			
 			//compresses the data
 			Deflater compressor = new Deflater();
@@ -40,36 +35,43 @@ public class Deflate  {
 			
 			compressor.end();
 			
+                        DataOutputStream headerWriter = new DataOutputStream(out);
+                        headerWriter.writeInt(compressedLength);
+                        System.out.println("Wrote CompressedLength");
+                        headerWriter.writeInt(input.length);
+                        System.out.println("Wrote len of uncompressed file");
 			//write the headers
 			BinaryStdOut.write(compressedLength); //length of compressed file
-                        System.out.println("Wrote len of comprssed file");
+                        
 			BinaryStdOut.write(input.length); //length of the uncompressed file
-                        System.out.println("Wrote len of uncompressed file");
 			//outputs the data
-			out.write(input);
+			IOUtils.write(output, out);
 			
+                        headerWriter.close();
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
-	public static void expand(BufferedInputStream in, BufferedOutputStream out) {
+	public static void expand(InputStream in, OutputStream out) {
 		try {
-			int compressedDataLength = BinaryStdIn.readInt();
-			int length = BinaryStdIn.readInt();
-			
+                        DataInputStream headerReader = new DataInputStream(in);
+                        int compressedDataLength = headerReader.readInt();
+			int length = headerReader.readInt();
+                        
 			//decompresses
 			Inflater decompresser = new Inflater();
 			byte[] output = new byte[compressedDataLength];
-			in.read(output);
+			IOUtils.read(in, output);
                         decompresser.setInput(output, 0, compressedDataLength);
-		    
                         byte[] result = new byte[length];
                         int resultLength = decompresser.inflate(result);
 		    
                         decompresser.end();
 		    
                         out.write(result);
+                        
+                        headerReader.close();
 		}
 		catch(Exception e) {
 			e.printStackTrace();

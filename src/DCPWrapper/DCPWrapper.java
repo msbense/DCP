@@ -11,8 +11,6 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.io.IOUtils;
 /**
@@ -57,7 +55,6 @@ public class DCPWrapper {
             socket = server.accept();
             System.out.println(socket.getRemoteSocketAddress().toString() + " connected");
         
-            
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             while ((alg = in.readLine()).equals(null)){}
             while ((file = in.readLine()).equals(null)){}
@@ -65,11 +62,10 @@ public class DCPWrapper {
             System.out.println("Opened " + path + "/files/" + file + ".txt");
             
             FileInputStream fileIn = new FileInputStream(new File(path + "/files/" + file + ".txt"));
-            ByteArrayOutputStream bArrayout = new ByteArrayOutputStream();
-            
             
             BufferedInputStream bis = new BufferedInputStream(fileIn);
-            BufferedOutputStream bos = new BufferedOutputStream(bArrayout);
+            OutputStream sock = socket.getOutputStream();
+            BufferedOutputStream bos = new BufferedOutputStream(sock);
             
             if (alg.toLowerCase().equals("huffman")){
                 HuffmanCompress(bis, bos);
@@ -90,21 +86,14 @@ public class DCPWrapper {
                 bis.close();
                 bos.close();
             }
-//            else if (alg.toLowerCase().equals("deflate")){
-//                Deflate.compress((BufferedInputStream)fileIn, out);
-//            }
-            
-            bArrayout.flush();
-            byte[] compressed = bArrayout.toByteArray();           
-            OutputStream s = socket.getOutputStream();
-            IOUtils.write(compressed, s);
-            s.flush();
+            else if (alg.toLowerCase().equals("deflate")){
+                Deflate.compress(bis, bos);
+                bis.close();
+                bos.close();
+            }
+           
             System.out.println("Compressed data sent");
-            ByteArrayOutputStream bouts = new ByteArrayOutputStream();
-            AdaptiveArithmeticDecompress.Decomp(new BufferedInputStream(new ByteArrayInputStream(compressed)), new BufferedOutputStream(bouts));
-            System.out.println(bouts.toString());
-            
-            bArrayout.close();
+           
             in.close();
             fileIn.close();
             socket.close();
@@ -127,13 +116,9 @@ public class DCPWrapper {
         stopwatch.start();
         System.out.println("Stopwatch started");
         
-        InputStream sock = socket.getInputStream();
-        byte[] sockToByte = IOUtils.toByteArray(sock);
-        ByteArrayInputStream cArray = new ByteArrayInputStream(sockToByte);
-        
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         
-        BufferedInputStream bis = new BufferedInputStream(cArray);
+        BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
         BufferedOutputStream bos = new BufferedOutputStream(byteArray);
         
         if (alg.equals("huffman")){
@@ -154,19 +139,19 @@ public class DCPWrapper {
                 bis.close();
                 bos.close();
             }
-//            else if(alg.equals("deflate")){
-//                Deflate.expand(soc, bufferedOut);
-//            }
-            
-        byteArray.flush();
+            else if(alg.equals("deflate")){
+                BinaryStdIn.setInputStream(bis);
+                BinaryStdOut.setOutputStream(bos);
+                Deflate.expand(bis, bos);
+                bis.close();
+                bos.close();
+            }
         System.out.println(byteArray.toString() + "\n");
         
         stopwatch.stop();
         System.out.println(stopwatch.getNanoTime() + " nanoseconds");
         
         byteArray.close();
-        sock.close();
-        cArray.close();
         socket.close();
         out.close();
     }

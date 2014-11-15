@@ -7,11 +7,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 
 public class AdaptiveArithmeticCompress {
 	
-	public static void Comp(BufferedInputStream CompressionInputStream, BufferedOutputStream CompressionOutputStream) {
+	public static void Comp(InputStream CompressionInputStream, OutputStream CompressionOutputStream) {
             BitOutputStream Cout = new BitOutputStream(CompressionOutputStream);
             try {
             	compress(CompressionInputStream, Cout);
