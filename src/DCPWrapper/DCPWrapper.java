@@ -66,6 +66,7 @@ public class DCPWrapper {
             FileInputStream fileIn = new FileInputStream(new File(path + "/files/" + file + ".txt"));
             ByteArrayOutputStream bArrayout = new ByteArrayOutputStream();
             
+            
             BufferedInputStream bis = new BufferedInputStream(fileIn);
             BufferedOutputStream bos = new BufferedOutputStream(bArrayout);
             
@@ -131,7 +132,7 @@ public class DCPWrapper {
         
         BufferedInputStream bis = new BufferedInputStream(cArray);
         BufferedOutputStream bos = new BufferedOutputStream(byteArray);
-                
+        
         if (alg.equals("huffman")){
                 HuffmanDecompress(bis, bos);
                 bis.close();
@@ -146,7 +147,9 @@ public class DCPWrapper {
                 RunLength.expand();
             }
             else if (alg.equals("arithmetic")){
-                AdaptiveArithmeticDecompress.Decomp(cArray, byteArray);
+                AdaptiveArithmeticDecompress.Decomp(bis, bos);
+                bis.close();
+                bos.close();
             }
 //            else if(alg.equals("deflate")){
 //                Deflate.expand(soc, bufferedOut);
@@ -154,7 +157,7 @@ public class DCPWrapper {
             
         //bufferedOut.flush();
         //byteArray.flush();
-        //System.out.println(byteArray.toString() + "\n");
+        System.out.println(byteArray.toString() + "\n");
         
         stopwatch.stop();
         System.out.println(stopwatch.getNanoTime() + " nanoseconds");
