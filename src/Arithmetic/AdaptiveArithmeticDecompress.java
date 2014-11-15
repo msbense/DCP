@@ -22,17 +22,6 @@ public class AdaptiveArithmeticDecompress {
                 decompress(Din, Dout);
             } catch (IOException ex) {
                 System.out.println("IO Exception in AdaptivearithmeticCompress.decompress");
-            } finally {
-                try {
-                    Dout.close();
-                } catch (IOException ex) {
-                    System.out.println("IO Exception in AdaptivearithmeticCompress.Decomp");
-                }
-                try {
-                    Din.close();
-                } catch (IOException ex) {
-                    System.out.println("IO Exception in AdaptivearithmeticCompress.Decomp");
-                }
             }
         }
     
