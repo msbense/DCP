@@ -97,17 +97,7 @@ public class DCPWrapper {
                bos.close();
             }
             
-            bArrayout.flush();
-            byte[] compressed = bArrayout.toByteArray();
-            System.out.println(compressed[45]);
-            OutputStream s = socket.getOutputStream();
-            IOUtils.write(compressed, s);    
-            
-            s.flush();
             System.out.println("Compressed data sent");
-            System.out.println("");
-            
-            //AdaptiveArithmeticDecompress.Decomp(new BufferedInputStream(new FileInputStream(new File(path + "/files/" + file + "diff.txt"))), new BufferedOutputStream(new FileOutputStream(new File(path + "/files/" + file + "ori.txt"))));
             
             in.close();
             fileIn.close();
@@ -131,10 +121,7 @@ public class DCPWrapper {
         stopwatch.start();
         System.out.println("Stopwatch started");
         
-        InputStream sock = socket.getInputStream();
-        byte[] sockToByte = IOUtils.toByteArray(sock);
-        System.out.println(sockToByte[45]);
-        ByteArrayInputStream cArray = new ByteArrayInputStream(sockToByte);
+        InputStream sock = socket.getInputStream(); 
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
 
         BufferedInputStream bis = new BufferedInputStream(sock);
@@ -164,16 +151,15 @@ public class DCPWrapper {
                 bos.close();
             }
             
-        bos.flush();
-        byteArray.flush();
-        //System.out.println(byteArray.toString() + "\n");
+//        bos.flush();
+//        byteArray.flush();
+        System.out.println(byteArray.toString() + "\n");
         
         stopwatch.stop();
         System.out.println(stopwatch.getNanoTime() + " nanoseconds");
         
         byteArray.close();
         sock.close();
-        cArray.close();
         socket.close();
         out.close();
     }
