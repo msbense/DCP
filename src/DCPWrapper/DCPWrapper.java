@@ -98,7 +98,7 @@ public class DCPWrapper {
             
             bArrayout.flush();
             byte[] compressed = bArrayout.toByteArray();
-            //System.out.println(compressed[45]);
+            System.out.println(compressed[45]);
             OutputStream s = socket.getOutputStream();
             IOUtils.write(compressed, s);
             s.flush();
@@ -129,7 +129,7 @@ public class DCPWrapper {
         
         InputStream sock = socket.getInputStream();
         byte[] sockToByte = IOUtils.toByteArray(sock);
-        //System.out.println(sockToByte[45]);
+        System.out.println(sockToByte[45]);
         ByteArrayInputStream cArray = new ByteArrayInputStream(sockToByte);
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         
