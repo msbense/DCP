@@ -65,7 +65,7 @@ public class DCPWrapper {
             
             BufferedInputStream bis = new BufferedInputStream(fileIn);
             OutputStream sock = socket.getOutputStream();
-            BufferedOutputStream bos = new BufferedOutputStream(sock);
+            BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
             
             if (alg.toLowerCase().equals("huffman")){
                 HuffmanCompress(bis, bos);
@@ -92,7 +92,10 @@ public class DCPWrapper {
             }
            
             System.out.println("Compressed data sent");
-           
+            System.out.println("");
+            
+            //AdaptiveArithmeticDecompress.Decomp(new BufferedInputStream(new FileInputStream(new File(path + "/files/" + file + "diff.txt"))), new BufferedOutputStream(new FileOutputStream(new File(path + "/files/" + file + "ori.txt"))));
+            
             in.close();
             fileIn.close();
             socket.close();
@@ -116,8 +119,8 @@ public class DCPWrapper {
         System.out.println("Stopwatch started");
         
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-        
-        BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
+        InputStream sock = socket.getInputStream();
+        BufferedInputStream bis = new BufferedInputStream(sock);
         BufferedOutputStream bos = new BufferedOutputStream(byteArray);
         
         if (alg.equals("huffman")){
@@ -135,7 +138,7 @@ public class DCPWrapper {
                 RunLength.expand();
             }
             else if (alg.equals("arithmetic")){
-                AdaptiveArithmeticDecompress.Decomp(bis, bos);
+                AdaptiveArithmeticDecompress.Decomp(sock, bos);
                 bis.close();
                 bos.close();
             }
