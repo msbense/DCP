@@ -1,5 +1,4 @@
 package DCPWrapper;
-import Algorithms.BinaryDump;
 import Algorithms.BinaryStdIn;
 import Algorithms.BinaryStdOut;
 import Algorithms.Huffman;
@@ -7,14 +6,15 @@ import Algorithms.LZW;
 import Algorithms.RunLength;
 import Arithmetic.AdaptiveArithmeticCompress;
 import Arithmetic.AdaptiveArithmeticDecompress;
-import Arithmetic.BitInputStream;
-import Arithmetic.BitOutputStream;
 import Runnables.Deflate;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.commons.io.IOUtils;
 /**
  *
  * @author mbense
@@ -45,9 +45,6 @@ public class DCPWrapper {
             host = args[2];
             alg = args[3];
             file = args[4];
-            if (alg.equals("arithmeticcompress")){
-                file2 = args[5];
-            }
             client(host, Integer.parseInt(port));
         }
     }
@@ -64,49 +61,53 @@ public class DCPWrapper {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             while ((alg = in.readLine()).equals(null)){}
             while ((file = in.readLine()).equals(null)){}
-            if (alg.equals("arithmeticcompress")){
-                while ((file2 = in.readLine()).equals(null)){}
-            }
-            System.out.println("Recieved + " + alg + " " + file);
-//          
-            BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
-            BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(new File(path + "files/" + file + ".txt")));
+            System.out.println("Recieved " + alg + " + " + file);
             System.out.println("Opened " + path + "/files/" + file + ".txt");
             
-            BinaryStdIn.setInputStream(fileIn);
+            FileInputStream fileIn = new FileInputStream(new File(path + "/files/" + file + ".txt"));
+            ByteArrayOutputStream bArrayout = new ByteArrayOutputStream();
             
-            BinaryStdOut.setOutputStream(out);
+            
+            BufferedInputStream bis = new BufferedInputStream(fileIn);
+            BufferedOutputStream bos = new BufferedOutputStream(bArrayout);
             
             if (alg.toLowerCase().equals("huffman")){
-                Huffman.compress();
+                HuffmanCompress(bis, bos);
+                bis.close();
+                bos.close();
             }
             else if (alg.toLowerCase().equals("lzw")){
-                LZW.compress();
+                
+                LZWDecompress(bis, bos);
+                bis.close();
+                bos.close();
             }
             else if (alg.toLowerCase().equals("runlength")){
                  RunLength.compress();
             }
             else if (alg.toLowerCase().equals("arithmetic")){
-            	/* try changing Input stream to simply:
-            	 * InputStream ArtihIn = fileIn;
-            	 * 
-            	 * *do this so that the I/O streams will match exactly the I/O 
-            	 * streams that work in the Arithmetic Compression program 
-            	 */
-                AdaptiveArithmeticCompress.compress(fileIn, new BitOutputStream(socket.getOutputStream()));
+                AdaptiveArithmeticCompress.Comp(bis, bos);
+                bis.close();
+                bos.close();
             }
-            else if (alg.toLowerCase().equals("deflate")){
-                Deflate.compress(fileIn, out);
-            }
+//            else if (alg.toLowerCase().equals("deflate")){
+//                Deflate.compress((BufferedInputStream)fileIn, out);
+//            }
             
+//            bArrayout.flush();
+            byte[] compressed = bArrayout.toByteArray();
+            System.out.println(compressed[45]);
+            OutputStream s = socket.getOutputStream();
+            IOUtils.write(compressed, s);
+            s.flush();
             System.out.println("Compressed data sent");
+            
+            bArrayout.close();
             in.close();
-            out.close();
             fileIn.close();
             socket.close();
         }
           //close all
-
     }
 
     private static void client(String host, int port) throws IOException, InterruptedException {
@@ -124,42 +125,92 @@ public class DCPWrapper {
         stopwatch.start();
         System.out.println("Stopwatch started");
         
-        
-        BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
-        BinaryStdIn.setInputStream(in);
-        
+        InputStream sock = socket.getInputStream();
+        byte[] sockToByte = IOUtils.toByteArray(sock);
+        System.out.println(sockToByte[45]);
+        ByteArrayInputStream cArray = new ByteArrayInputStream(sockToByte);
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-        BinaryStdOut.setOutputStream(new BufferedOutputStream(byteArray));
+        
+        BufferedInputStream bis = new BufferedInputStream(cArray);
+        BufferedOutputStream bos = new BufferedOutputStream(byteArray);
         
         if (alg.equals("huffman")){
-                Huffman.expand();
+                HuffmanDecompress(bis, bos);
+                bis.close();
+                bos.close();
             }
             else if (alg.equals("lzw")){
-                LZW.expand();
+                LZWDecompress(bis, bos);
+                bis.close();
+                bos.close();
             }
             else if (alg.equals("RunLength")){
                 RunLength.expand();
             }
             else if (alg.equals("arithmetic")){
-            	/* Try changing the BufferedOutputStream into an OutputStream
-            	 * so that the IO streams will match those in the Arithmetic decmopression program
-            	 * 
-            	 */
-                AdaptiveArithmeticDecompress.decompress(new BitInputStream(socket.getInputStream()), new BufferedOutputStream(byteArray));
+                AdaptiveArithmeticDecompress.Decomp(bis, bos);
+                bis.close();
+                bos.close();
             }
-            else if(alg.equals("deflate")){
-                Deflate.expand(in, new BufferedOutputStream(byteArray));
-            }
+//            else if(alg.equals("deflate")){
+//                Deflate.expand(soc, bufferedOut);
+//            }
             
-        
+        //bufferedOut.flush();
+        //byteArray.flush();
         System.out.println(byteArray.toString() + "\n");
         
         stopwatch.stop();
         System.out.println(stopwatch.getNanoTime() + " nanoseconds");
         
         byteArray.close();
-        in.close();
+        sock.close();
+        cArray.close();
         socket.close();
         out.close();
     }
+    
+    public static void HuffmanCompress(BufferedInputStream bis, BufferedOutputStream bos) {
+        try {
+            BinaryStdIn.setInputStream(bis);
+            BinaryStdOut.setOutputStream(bos);
+            Huffman.compress();
+        } catch (Exception ex) {
+            System.out.println("Exception in huffmanCompress");
+        }
+    }
+    public static void HuffmanDecompress(BufferedInputStream bis, BufferedOutputStream bos){
+        try{
+            BinaryStdIn.setInputStream(bis);
+            BinaryStdOut.setOutputStream(bos);
+            Huffman.expand();
+        }
+        catch (Exception e){
+            System.out.println("Exception in huffmanDecompress");
+        }
+    }
+    
+    public static void LZWCompress(BufferedInputStream bis, BufferedOutputStream bos){
+        try{
+            BinaryStdIn.setInputStream(bis);
+            BinaryStdOut.setOutputStream(bos);
+            LZW.compress();
+        }
+        catch (Exception e){
+            System.out.println("Exception in LZWCompress");
+        }
+    }
+    public static void LZWDecompress(BufferedInputStream bis, BufferedOutputStream bos){
+        try{
+            BinaryStdIn.setInputStream(bis);
+            BinaryStdOut.setOutputStream(bos);
+            LZW.expand();
+        }
+        catch (Exception e){
+            System.out.println("Exception in LZWDecompress");
+        }
+    }
+    
+    public static void RunLengthCompress(){}
+    public static void RunLengthDecompress(){}
 }

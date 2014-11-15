@@ -11,6 +11,16 @@ import java.io.OutputStream;
 
 public class AdaptiveArithmeticDecompress {
 	
+        public static void Decomp(BufferedInputStream DecompressionInputStream, BufferedOutputStream DecompressionOutputStream){
+            
+            BitInputStream Din = new BitInputStream(DecompressionInputStream);
+            try {
+                decompress(Din, DecompressionOutputStream);
+            } catch (IOException ex) {
+                System.out.println("IO Exception in AdaptivearithmeticCompress.decompress");
+            }
+        }
+    
 	public static void main(String[] args) throws IOException {
 		// Show what command line arguments to use
 		if (args.length == 0) {
@@ -36,12 +46,15 @@ public class AdaptiveArithmeticDecompress {
 	public static void decompress(BitInputStream in, OutputStream out) throws IOException {
 		FrequencyTable freq = new SimpleFrequencyTable(new FlatFrequencyTable(257));  // Initialize with all symbol frequencies at 1
 		ArithmeticDecoder dec = new ArithmeticDecoder(in);
+                
 		while (true) {
 			int symbol = dec.read(freq);
 			if (symbol == 256)  // EOF symbol
 				break;
 			out.write(symbol);
+                        
 			freq.increment(symbol);
+                        
 		}
 	}
 	

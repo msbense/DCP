@@ -11,7 +11,17 @@ import java.io.InputStream;
 
 public class AdaptiveArithmeticCompress {
 	
-	public static void main(String[] args) throws IOException {
+	public static void Comp(BufferedInputStream CompressionInputStream, BufferedOutputStream CompressionOutputStream) {
+            BitOutputStream Cout = new BitOutputStream(CompressionOutputStream);
+            try {
+            	compress(CompressionInputStream, Cout);
+            }
+            catch (IOException e){
+                System.out.println("IO Exception in AdaptivearithmeticCompress.compress");
+            }  
+        }
+        
+        public static void main(String[] args) throws IOException {
 		// Show what command line arguments to use
 		if (args.length == 0) {
 			System.err.println("Usage: java ArithmeticCompress InputFile OutputFile");
@@ -38,8 +48,9 @@ public class AdaptiveArithmeticCompress {
 		ArithmeticEncoder enc = new ArithmeticEncoder(out);
 		while (true) {
 			int b = in.read();
-			if (b == -1)
-				break;
+			if (b == -1){	
+                            break;    
+                        }
 			enc.write(freq, b);
 			freq.increment(b);
 		}
