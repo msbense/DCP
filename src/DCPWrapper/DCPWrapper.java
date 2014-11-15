@@ -136,7 +136,7 @@ public class DCPWrapper {
         System.out.println(sockToByte[45]);
         ByteArrayInputStream cArray = new ByteArrayInputStream(sockToByte);
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-        InputStream sock = socket.getInputStream();
+
         BufferedInputStream bis = new BufferedInputStream(sock);
         BufferedOutputStream bos = new BufferedOutputStream(byteArray);
         
