@@ -85,6 +85,7 @@ public class DCPWrapper {
                  RunLength.compress();
             }
             else if (alg.toLowerCase().equals("arithmetic")){
+                InputStream arithIn = new BufferedInputStream(fileIn);
                 AdaptiveArithmeticCompress.Comp(bis, bos);
                 bis.close();
                 bos.close();
