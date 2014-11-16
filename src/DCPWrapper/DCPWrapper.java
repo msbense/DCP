@@ -75,8 +75,7 @@ public class DCPWrapper {
             
             
             BufferedInputStream bis = new BufferedInputStream(fileIn);
-            OutputStream sock = socket.getOutputStream();
-            BufferedOutputStream bos = new BufferedOutputStream(sock);
+            BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
             
             if (alg.toLowerCase().equals("huffman")){
                 HuffmanCompress(bis, bos);
