@@ -102,6 +102,11 @@ public class DCPWrapper {
                bis.close();
                bos.close();
             }
+            else if(alg.equals("raw")) {
+            	rawData(bis, bos);
+            	bis.close();
+            	bos.close();
+            }
             
             System.out.println("Compressed data sent");
             
@@ -145,8 +150,6 @@ public class DCPWrapper {
             }
             else if (alg.equals("RunLength")){
                 BinaryRunDecom(bis, bos);
-                bis.close();
-                bos.close();
             }
             else if (alg.equals("arithmetic")){
                 AdaptiveArithmeticDecompress.Decomp(sock, bos);
@@ -158,9 +161,14 @@ public class DCPWrapper {
                 bis.close();
                 bos.close();
             }
+            else if(alg.equals("raw")) {
+            	rawData(bis, bos);
+            	bis.close();
+            	bos.close();
+            }
             
-//       bos.flush();
-//       byteArray.flush();
+//      bos.flush();
+//      byteArray.flush();
         System.out.println(byteArray.toString() + "\n");
         
         stopwatch.stop();
@@ -234,7 +242,19 @@ public class DCPWrapper {
     	BinaryStdIn.setInputStream(new BufferedInputStream(bais));
     	BinaryStdOut.setOutputStream(bos);
     	
+    	
     	RunLength.compress();
+    }
+    public static void rawData(BufferedInputStream bis, BufferedOutputStream bos) {
+    	try {
+	    	int i;
+	    	while((i = bis.read()) != -1) {
+	    		bos.write(i);
+	    	}
+    	}
+    	catch(Exception e) {
+    		e.printStackTrace();
+    	}
     }
 }
 
