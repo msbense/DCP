@@ -48,7 +48,7 @@ public class BinaryDump {
         if (BITS_PER_LINE != 0) 
         	StdOut.println();
         
-        //StdOut.println(count + " bits");
+        StdOut.println(count + " bits");
     }
     
     /**

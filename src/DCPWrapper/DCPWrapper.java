@@ -1,5 +1,6 @@
 package DCPWrapper;
 
+import Algorithms.BinaryDump;
 import Algorithms.BinaryStdIn;
 import Algorithms.BinaryStdOut;
 import Algorithms.Huffman;
@@ -84,7 +85,9 @@ public class DCPWrapper {
                 bos.close();
             }
             else if (alg.toLowerCase().equals("runlength")){
-                 RunLength.compress();
+                 RunLengthCompress(bis, bos);
+                 bis.close();
+                 bos.close();
             }
             else if (alg.toLowerCase().equals("arithmetic")){
                 AdaptiveArithmeticCompress.Comp(bis, bos);
@@ -138,7 +141,9 @@ public class DCPWrapper {
                 bos.close();
             }
             else if (alg.equals("RunLength")){
-                RunLength.expand();
+                RunLengthDecompress(bis, bos);
+                bis.close();
+                bos.close();
             }
             else if (alg.equals("arithmetic")){
                 AdaptiveArithmeticDecompress.Decomp(sock, bos);
@@ -214,7 +219,17 @@ public class DCPWrapper {
          BinaryStdOut.setOutputStream(bos);
          Deflate.expand(bis, bos);
     }
-    public static void RunLengthCompress(){}
-    public static void RunLengthDecompress(){}
+    public static void RunLengthCompress(BufferedInputStream bis, BufferedOutputStream bos){
+        BinaryStdIn.setInputStream(bis);
+        BinaryStdOut.setOutputStream(bos);
+        //BinaryDump.compressToBinary();
+        RunLength.compress();
+        
+    }
+    public static void RunLengthDecompress(BufferedInputStream bis, BufferedOutputStream bos){
+        BinaryStdIn.setInputStream(bis);
+        BinaryStdOut.setOutputStream(bos);
+        RunLength.expand();
+    }
 }
 
