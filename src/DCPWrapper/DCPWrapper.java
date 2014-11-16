@@ -89,6 +89,8 @@ public class DCPWrapper {
             }
             else if (alg.toLowerCase().equals("runlength")){
                 BinaryRunCom(bis, bos);
+                bis.close();
+                bos.close();
             }
             else if (alg.toLowerCase().equals("arithmetic")){
                 AdaptiveArithmeticCompress.Comp(bis, bos);
@@ -143,6 +145,8 @@ public class DCPWrapper {
             }
             else if (alg.equals("RunLength")){
                 BinaryRunDecom(bis, bos);
+                bis.close();
+                bos.close();
             }
             else if (alg.equals("arithmetic")){
                 AdaptiveArithmeticDecompress.Decomp(sock, bos);
