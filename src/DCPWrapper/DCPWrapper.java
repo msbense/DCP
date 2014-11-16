@@ -170,6 +170,7 @@ public class DCPWrapper {
 //      bos.flush();
 //      byteArray.flush();
         System.out.println(byteArray.toString() + "\n");
+        System.out.println(byteArray.size() + " compressed bytes");
         
         stopwatch.stop();
         System.out.println(stopwatch.getNanoTime() + " nanoseconds");
