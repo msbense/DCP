@@ -248,10 +248,7 @@ public class DCPWrapper {
     }
     public static void rawData(BufferedInputStream bis, BufferedOutputStream bos) {
     	try {
-	    	int i;
-	    	while((i = bis.read()) != -1) {
-	    		bos.write(i);
-	    	}
+	    	IOUtils.copy(bis, bos);
     	}
     	catch(Exception e) {
     		e.printStackTrace();
