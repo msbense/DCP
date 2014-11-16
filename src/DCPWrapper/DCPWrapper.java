@@ -1,5 +1,6 @@
 package DCPWrapper;
 
+import Algorithms.BinaryDump;
 import Algorithms.BinaryStdIn;
 import Algorithms.BinaryStdOut;
 import Algorithms.Huffman;
@@ -8,12 +9,14 @@ import Algorithms.RunLength;
 import Arithmetic.AdaptiveArithmeticCompress;
 import Arithmetic.AdaptiveArithmeticDecompress;
 import Runnables.Deflate;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.io.IOUtils;
 /**
@@ -66,12 +69,14 @@ public class DCPWrapper {
             System.out.println("Opened " + path + "/files/" + file + ".txt");
             
             FileInputStream fileIn = new FileInputStream(new File(path + "files/" + file + ".txt"));
-            ByteArrayOutputStream bArrayout = new ByteArrayOutputStream();
+            
+            @SuppressWarnings("unused")
+			ByteArrayOutputStream bArrayout = new ByteArrayOutputStream();
             
             
             BufferedInputStream bis = new BufferedInputStream(fileIn);
             OutputStream sock = socket.getOutputStream();
-            BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+            BufferedOutputStream bos = new BufferedOutputStream(sock);
             
             if (alg.toLowerCase().equals("huffman")){
                 HuffmanCompress(bis, bos);
@@ -84,7 +89,7 @@ public class DCPWrapper {
                 bos.close();
             }
             else if (alg.toLowerCase().equals("runlength")){
-                 RunLength.compress();
+                BinaryRunCom(bis, bos);
             }
             else if (alg.toLowerCase().equals("arithmetic")){
                 AdaptiveArithmeticCompress.Comp(bis, bos);
@@ -99,11 +104,11 @@ public class DCPWrapper {
             
             System.out.println("Compressed data sent");
             
+            //close all
             in.close();
             fileIn.close();
             socket.close();
         }
-        //close all
     }
 
     private static void client(String host, int port) throws IOException, InterruptedException {
@@ -138,7 +143,7 @@ public class DCPWrapper {
                 bos.close();
             }
             else if (alg.equals("RunLength")){
-                RunLength.expand();
+                BinaryRunDecom(bis, bos);
             }
             else if (alg.equals("arithmetic")){
                 AdaptiveArithmeticDecompress.Decomp(sock, bos);
@@ -151,13 +156,14 @@ public class DCPWrapper {
                 bos.close();
             }
             
-//        bos.flush();
-//        byteArray.flush();
+//       bos.flush();
+//       byteArray.flush();
         System.out.println(byteArray.toString() + "\n");
         
         stopwatch.stop();
         System.out.println(stopwatch.getNanoTime() + " nanoseconds");
         
+        //close everything
         byteArray.close();
         sock.close();
         socket.close();
@@ -214,7 +220,18 @@ public class DCPWrapper {
          BinaryStdOut.setOutputStream(bos);
          Deflate.expand(bis, bos);
     }
-    public static void RunLengthCompress(){}
-    public static void RunLengthDecompress(){}
+    public static void BinaryRunDecom(BufferedInputStream bis, BufferedOutputStream bos){
+    	BinaryStdIn.setInputStream(bis);
+    	BinaryStdOut.setOutputStream(bos);
+    	RunLength.expand();
+    }
+    public static void BinaryRunCom(BufferedInputStream bis, BufferedOutputStream bos) {
+    	BinaryStdIn.setInputStream(bis);
+    	ByteArrayInputStream bais = new ByteArrayInputStream(BinaryDump.compressToBinary().getBytes());
+    	BinaryStdIn.setInputStream(new BufferedInputStream(bais));
+    	BinaryStdOut.setOutputStream(bos);
+    	
+    	RunLength.compress();
+    }
 }
 
