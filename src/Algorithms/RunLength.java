@@ -61,30 +61,6 @@ public class RunLength {
         BinaryStdOut.close();
     }
 
-    public static void compress(String binary) {
-    	char run = 0;
-    	boolean old = false;
-    	BinaryStdIn in = new BinaryStdIn();
-    	in.setInputStream(new BufferedInputStream(new ByteArrayInputStream(binary.getBytes())));
-    	for(int i = 0; i < binary.length(); i++) {
-    		boolean b = in.readBoolean();
-    		if(b != old) {
-    			BinaryStdOut.write(run, lgR);
-    			run = 1;
-    			old = !old;
-    		}
-    		else {
-    			if(run == R-1) {
-    				BinaryStdOut.write(run, lgR);
-    				run = 0;
-    				BinaryStdOut.write(run, lgR);
-    			}
-    			run++;
-    		}
-    	}
-    	BinaryStdOut.write(run, lgR);
-    	BinaryStdOut.close();
-    }
     public static void main(String[] args) {
         if      (args[0].equals("-")) compress();
         else if (args[0].equals("+")) expand();
