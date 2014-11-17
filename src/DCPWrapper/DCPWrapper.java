@@ -14,6 +14,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,7 +76,8 @@ public class DCPWrapper {
             
             
             BufferedInputStream bis = new BufferedInputStream(fileIn);
-            BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+            ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+            BufferedOutputStream bos = new BufferedOutputStream(bOut);
             
             if (alg.toLowerCase().equals("huffman")){
                 HuffmanCompress(bis, bos);
@@ -109,7 +111,9 @@ public class DCPWrapper {
             }
             
             System.out.println("Compressed data sent");
-            
+            byte[] compressed = bOut.toByteArray();
+            IOUtils.copy(new ByteArrayInputStream(compressed), socket.getOutputStream());
+            System.out.println(compressed.length + " compressed file bytes length");
             //close all
             in.close();
             fileIn.close();
@@ -119,6 +123,9 @@ public class DCPWrapper {
 
     private static void client(String host, int port) throws IOException, InterruptedException {
 
+        Scanner s = new Scanner(System.in);
+        System.out.println("Hit enter to start");
+        s.nextLine();
         Socket socket = new Socket(InetAddress.getByName(host), port);
         System.out.println("Connected to host");
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -170,10 +177,11 @@ public class DCPWrapper {
 //      bos.flush();
 //      byteArray.flush();
         System.out.println(byteArray.toString() + "\n");
-        System.out.println(byteArray.size() + " compressed bytes");
+        System.out.println(byteArray.size() + " original file bytes length");
         
         stopwatch.stop();
         System.out.println(stopwatch.getNanoTime() + " nanoseconds");
+        System.out.println(stopwatch.getTime() + " milliseconds\n");
         
         //close everything
         byteArray.close();
