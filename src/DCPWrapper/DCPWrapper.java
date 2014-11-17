@@ -223,13 +223,13 @@ public class DCPWrapper {
         }
     }
     public static void DeflateCompress(BufferedInputStream bis, BufferedOutputStream bos) {
-    	  BinaryStdIn.setInputStream(bis);
-          BinaryStdOut.setOutputStream(bos);
+//    	  BinaryStdIn.setInputStream(bis);
+//          BinaryStdOut.setOutputStream(bos);
           Deflate.compress(bis, bos);
     }
     public static void DeflateDecompress(BufferedInputStream bis, BufferedOutputStream bos) {
-    	 BinaryStdIn.setInputStream(bis);
-         BinaryStdOut.setOutputStream(bos);
+//    	 BinaryStdIn.setInputStream(bis);
+//         BinaryStdOut.setOutputStream(bos);
          Deflate.expand(bis, bos);
     }
     public static void BinaryRunDecom(BufferedInputStream bis, BufferedOutputStream bos){

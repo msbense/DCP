@@ -32,6 +32,7 @@ public class Deflate  {
 			compressor.end();
 			
                         IOUtils.write(output, out);
+                        
                         intWriter.close();
 			//outputs the data
 			
@@ -46,17 +47,16 @@ public class Deflate  {
                     DataInputStream intReader = new DataInputStream(in);
                     int length = intReader.readInt();
 			//decompresses
-			Inflater decompresser = new Inflater();
+                    Inflater decompresser = new Inflater();
 
-                        byte[] outputArray = IOUtils.toByteArray(in);
-                        System.out.println("OutputArray len = " + outputArray.length);
-                        decompresser.setInput(outputArray, 0, outputArray.length);
-                        byte[] result = new byte[length];
-                        int resultLength = decompresser.inflate(result);
-                        decompresser.end();
+                    byte[] outputArray = IOUtils.toByteArray(in);
+                    decompresser.setInput(outputArray, 0, outputArray.length);
+                    byte[] result = new byte[length];
+                    int resultLength = decompresser.inflate(result);
+                    decompresser.end();
 		    
-                        out.write(result);
-                        intReader.close();
+                    out.write(result);
+                    intReader.close();
 		}
 		catch(Exception e) {
 			e.printStackTrace();
