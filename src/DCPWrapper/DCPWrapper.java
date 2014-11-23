@@ -67,7 +67,7 @@ public class DCPWrapper {
             while ((alg = in.readLine()).equals(null)){}
             while ((file = in.readLine()).equals(null)){}
             System.out.println("Recieved " + alg + " + " + file);
-            System.out.println("Opened " + path + "/files/" + file + ".txt");
+            System.out.println("Opened " + path + "/files/" + file);
             
             FileInputStream fileIn = new FileInputStream(new File(path + "files/" + file + ".txt"));
             
@@ -176,10 +176,11 @@ public class DCPWrapper {
             
 //      bos.flush();
 //      byteArray.flush();
-        System.out.println(byteArray.toString() + "\n");
-        System.out.println(byteArray.size() + " original file bytes length");
+        
         
         stopwatch.stop();
+        System.out.println(byteArray.toString() + "\n");
+        System.out.println(byteArray.size() + " original file bytes length\n");
         System.out.println(stopwatch.getNanoTime() + " nanoseconds");
         System.out.println(stopwatch.getTime() + " milliseconds\n");
         
